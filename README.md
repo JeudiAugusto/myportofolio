@@ -147,3 +147,13 @@ myportofolio/
     │   └── style.css
     └── img/
         └── profile.jpg
+
+## Reflection
+
+### Tugas 1
+
+1. Pada Tutorial dan Tugas 1, saya menggunakan elemen semantik HTML5 seperti `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, dan `<footer>`. Elemen-elemen tersebut membantu saya membagi halaman berdasarkan fungsi dan struktur konten, bukan hanya berdasarkan tampilan visual. Misalnya, `<section>` saya gunakan untuk memisahkan About, Skills, Projects, dan Contact, sedangkan `<article>` digunakan untuk item yang berdiri sendiri seperti skill dan project. Penggunaan elemen semantik membuat struktur HTML lebih mudah dipahami, lebih terorganisir, dan lebih sesuai dengan tujuan masing-masing bagian halaman.
+
+2. Tantangan utama saat membuat responsive CSS adalah mempertahankan hierarchy dan keterbacaan layout ketika ukuran layar berubah. Pada desktop, hero saya menggunakan CSS Grid dengan foto di sebelah kanan dan informasi utama di sebelah kiri. Pada layar yang lebih kecil, susunan tersebut harus diubah menjadi satu kolom agar teks tidak terlalu sempit dan gambar tidak keluar dari layar. Saya mengevaluasinya dengan menguji halaman pada ukuran desktop dan mobile, kemudian menggunakan breakpoint untuk mengubah jumlah kolom, ukuran typography, jarak antar elemen, serta susunan navigation. Dari proses tersebut saya belajar bahwa responsive design bukan sekadar mengecilkan ukuran elemen, tetapi menentukan kembali prioritas dan hubungan antar elemen pada layar yang berbeda.
+
+3. Karena website ini masih merupakan static web murni, informasi di dalamnya harus ditulis langsung pada template sehingga perubahan konten masih membutuhkan perubahan source code. Keterbatasan lain adalah project dan skill belum dapat dikelola secara dinamis berdasarkan data pengguna atau database. Pada iterasi berikutnya, fungsionalitas yang paling ingin saya tambahkan adalah integrasi backend Django dengan database sehingga data seperti project, skill, dan informasi portfolio dapat dikelola melalui model dan halaman admin tanpa harus mengubah HTML secara manual.
