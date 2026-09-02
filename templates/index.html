@@ -1,0 +1,460 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jeudi Augusto Asadullah - Portfolio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="site-header">
+        <div class="container navbar">
+
+            <a href="#profile" class="brand">
+                JA<span>.</span>
+            </a>
+
+            <nav class="nav-menu" aria-label="Main navigation">
+                <a href="#profile">Profile</a>
+                <a href="#about">About</a>
+                <a href="#skills">Skills</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main>
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero" id="profile">
+
+            <div class="container hero-grid">
+
+                <div class="hero-identity">
+
+                    <p class="hero-kicker">
+                        Sistem Informasi · Universitas Indonesia
+                    </p>
+
+                    <h1>
+                        Jeudi Augusto Asadullah
+                    </h1>
+
+                </div>
+
+
+                <div class="hero-photo">
+
+                    <div class="photo-block"></div>
+
+                    <img
+                        class="avatar"
+                        src="{% static 'img/profile.jpg' %}"
+                        alt="Foto Jeudi Augusto Asadullah"
+                    >
+
+                </div>
+
+
+                <div class="hero-details">
+                    <div class="status-badge">
+                        <span class="status-dot"></span>
+                        <span>Currently Learning</span>
+                    </div>
+
+                    <p class="bio">
+                        Halo! Saya Jeudi Augusto Asadullah, mahasiswa
+                        Sistem Informasi Universitas Indonesia yang sedang
+                        mempelajari pengembangan web menggunakan Django.
+                    </p>
+
+
+                    <dl class="meta-list">
+                        <div class="learning-stack">
+                            <span>Python</span>
+                            <span>Django</span>
+                            <span>HTML5</span>
+                            <span>CSS3</span>
+                        </div>
+
+                        <div class="meta-row">
+                            <dt>NPM</dt>
+                            <dd>2506656822</dd>
+                        </div>
+
+                        <div class="meta-row">
+                            <dt>Program</dt>
+                            <dd>S1 Sistem Informasi</dd>
+                        </div>
+
+                    </dl>
+
+
+                    <div class="social-links">
+
+                        <a
+                            href="https://github.com/JeudiAugusto"
+                            class="social-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            GitHub
+                        </a>
+
+                        <a
+                            href="https://www.linkedin.com/in/jeudi-augusto-asadullah/"
+                            class="social-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            LinkedIn
+                        </a>
+
+                        <a
+                            href="mailto:jeudiaugustoasadullah@gmail.com"
+                            class="social-link"
+                        >
+                            Email
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ABOUT ================= -->
+
+        <section class="content-section" id="about">
+
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="section-label">01</p>
+                    <h2>About Me</h2>
+                </div>
+
+                <div class="about-grid">
+
+                    <div>
+                        <p class="large-text">
+                            Saya adalah mahasiswa Sistem Informasi
+                            Universitas Indonesia yang tertarik pada
+                            teknologi, pengembangan web, dan bagaimana
+                            sebuah produk digital dapat menyelesaikan
+                            masalah nyata.
+                        </p>
+                    </div>
+
+                    <div>
+                        <p>
+                            Saat ini saya sedang memperdalam pemrograman
+                            berbasis platform menggunakan Python dan Django.
+                            Website ini merupakan salah satu bagian dari
+                            proses belajar saya dalam memahami pengembangan
+                            aplikasi web secara lebih terstruktur.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SKILLS ================= -->
+
+        <section class="content-section" id="skills">
+
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="section-label">02</p>
+                    <h2>Skills</h2>
+                </div>
+
+                <div class="skills-grid">
+
+                    <article class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-number">01</span>
+                            <span class="skill-level">90%</span>
+                        </div>
+
+                        <h3>Python</h3>
+
+                        <p>
+                            Dasar pemrograman dan pengembangan aplikasi
+                            menggunakan Python.
+                        </p>
+
+                        <div class="skill-bar" aria-label="Python proficiency 90 percent">
+                            <span class="skill-progress python"></span>
+                        </div>
+                    </article>
+
+
+                    <article class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-number">02</span>
+                            <span class="skill-level">80%</span>
+                        </div>
+
+                        <h3>Django</h3>
+
+                        <p>
+                            Pengembangan aplikasi web menggunakan
+                            framework Django.
+                        </p>
+
+                        <div class="skill-bar" aria-label="Django proficiency 80 percent">
+                            <span class="skill-progress django"></span>
+                        </div>
+                    </article>
+
+
+                    <article class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-number">03</span>
+                            <span class="skill-level">90%</span>
+                        </div>
+
+                        <h3>HTML5</h3>
+
+                        <p>
+                            Membuat struktur halaman web menggunakan
+                            semantic HTML.
+                        </p>
+
+                        <div class="skill-bar" aria-label="HTML5 proficiency 90 percent">
+                            <span class="skill-progress html"></span>
+                        </div>
+                    </article>
+
+
+                    <article class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-number">04</span>
+                            <span class="skill-level">85%</span>
+                        </div>
+
+                        <h3>CSS3</h3>
+
+                        <p>
+                            Membuat layout, responsive design,
+                            dan interaction menggunakan CSS.
+                        </p>
+
+                        <div class="skill-bar" aria-label="CSS3 proficiency 85 percent">
+                            <span class="skill-progress css"></span>
+                        </div>
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PROJECTS ================= -->
+
+        <section class="content-section" id="projects">
+
+            <div class="container">
+
+                <div class="section-heading">
+                    <p class="section-label">03</p>
+                    <h2>Projects</h2>
+                </div>
+
+
+                <div class="projects-grid">
+
+                    <article class="project-card">
+
+                        <div class="project-top">
+                            <span>PROJECT 01</span>
+                            <span>2026</span>
+                        </div>
+
+                        <h3>
+                            Personal Portfolio
+                        </h3>
+
+                        <p class="project-description">
+                            Website portfolio pribadi yang dibangun menggunakan
+                            Django, HTML5, dan CSS3 dengan responsive layout,
+                            semantic HTML, serta interactive UI elements.
+                        </p>
+
+                        <div class="project-tags">
+                            <span>Django</span>
+                            <span>Python</span>
+                            <span>HTML5</span>
+                            <span>CSS3</span>
+                        </div>
+
+                        <div class="project-details">
+                            <div>
+                                <span>ROLE</span>
+                                <strong>Developer</strong>
+                            </div>
+
+                            <div>
+                                <span>FOCUS</span>
+                                <strong>Web UI</strong>
+                            </div>
+                        </div>
+
+                        <a
+                            href="https://github.com/JeudiAugusto/myportofolio"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="project-link"
+                        >
+                            View Repository →
+                        </a>
+
+                    </article>
+
+
+                    <article class="project-card">
+
+                        <div class="project-top">
+                            <span>PROJECT 02</span>
+                            <span>2025</span>
+                        </div>
+
+                        <h3>
+                            Cashie
+                        </h3>
+
+                        <p class="project-description">
+                            Aplikasi web pengelola keuangan yang dikembangkan
+                            menggunakan PHP dan JavaScript dengan fitur
+                            authentication, dashboard, CRUD, dan AJAX.
+                        </p>
+
+                        <div class="project-tags">
+                            <span>PHP</span>
+                            <span>JavaScript</span>
+                            <span>SQL</span>
+                            <span>CRUD</span>
+                            <span>AJAX</span>
+                        </div>
+
+                        <div class="project-details">
+                            <div>
+                                <span>ROLE</span>
+                                <strong>Team Project</strong>
+                            </div>
+
+                            <div>
+                                <span>FOCUS</span>
+                                <strong>Finance Web App</strong>
+                            </div>
+                        </div>
+
+                        <a
+                            href="https://github.com/fzdhl/cashie"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="project-link"
+                        >
+                            View Repository →
+                        </a>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CONTACT ================= -->
+
+        <section class="contact-section" id="contact">
+
+            <div class="container contact-inner">
+
+                <div>
+                    <p class="section-label">04</p>
+
+                    <h2>
+                        Let's build
+                        something meaningful.
+                    </h2>
+                </div>
+
+                <div class="contact-action">
+
+                    <p>
+                        Punya pertanyaan, ide, atau ingin berkolaborasi?
+                        Silakan hubungi saya.
+                    </p>
+
+                    <a
+                        href="mailto:jeudiaugustoasadullah@gmail.com"
+                        class="contact-button"
+                    >
+                        Get in Touch →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-inner">
+
+            <p>
+                © 2026 Jeudi Augusto Asadullah
+            </p>
+
+            <p>
+                Sistem Informasi · Universitas Indonesia
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>
