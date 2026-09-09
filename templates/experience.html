@@ -1,0 +1,403 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Experience - {{ name }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}?v=3"
+    >
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="site-header">
+
+        <div class="container navbar">
+
+            <a href="{% url 'main:show_main' %}" class="brand">
+                JA<span>.</span>
+            </a>
+
+            <nav class="nav-menu" aria-label="Main navigation">
+
+                <a href="{% url 'main:show_main' %}#profile">
+                    Profile
+                </a>
+
+                <a href="{% url 'main:show_main' %}#about">
+                    About
+                </a>
+
+                <a href="{% url 'main:show_main' %}#skills">
+                    Skills
+                </a>
+
+                <a href="{% url 'main:show_main' %}#projects">
+                    Projects
+                </a>
+
+                <a
+                    href="{% url 'main:show_experience' %}"
+                    class="nav-active"
+                >
+                    Experience
+                </a>
+
+                <a href="{% url 'main:show_main' %}#contact">
+                    Contact
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="exp-page">
+
+        <!-- ================= HERO ================= -->
+
+        <section class="exp-hero">
+
+            <div class="container exp-hero-grid">
+
+                <div class="exp-hero-copy">
+
+                    <p class="exp-eyebrow">
+                        CAREER & EXPERIENCE
+                    </p>
+
+                    <h1>
+                        Building products,
+                        learning by doing.
+                    </h1>
+
+                    <p class="exp-intro">
+                        Saya {{ name }}, mahasiswa Sistem Informasi Universitas
+                        Indonesia yang berfokus pada web development, software
+                        engineering, dan pengembangan produk digital.
+                    </p>
+
+                    <div class="exp-actions">
+
+                        <a
+                            href="mailto:jeudiaugustoasadullah@gmail.com"
+                            class="exp-primary-button"
+                        >
+                            Let's Connect
+                        </a>
+
+                        <a
+                            href="{% url 'main:show_main' %}#projects"
+                            class="exp-secondary-button"
+                        >
+                            View Projects
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <aside class="exp-summary">
+
+                    <div class="exp-availability">
+
+                        <span class="exp-availability-dot"></span>
+
+                        <span>
+                            Open to Internship Opportunities
+                        </span>
+
+                    </div>
+
+
+                    <div class="exp-summary-item">
+
+                        <span class="exp-summary-label">
+                            CURRENT FOCUS
+                        </span>
+
+                        <strong>
+                            Django & Web Development
+                        </strong>
+
+                    </div>
+
+
+                    <div class="exp-summary-item">
+
+                        <span class="exp-summary-label">
+                            STUDY
+                        </span>
+
+                        <strong>
+                            Information Systems · UI
+                        </strong>
+
+                    </div>
+
+
+                    <div class="exp-summary-item">
+
+                        <span class="exp-summary-label">
+                            INTERESTS
+                        </span>
+
+                        <div class="exp-tags">
+
+                            <span>Backend</span>
+                            <span>Web</span>
+                            <span>Product</span>
+                            <span>Software</span>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= EXPERIENCE LIST ================= -->
+
+        <section class="exp-section">
+
+            <div class="container">
+
+                <div class="exp-section-header">
+
+                    <div>
+
+                        <p class="section-label">
+                            05
+                        </p>
+
+                        <h2>
+                            Experience
+                        </h2>
+
+                    </div>
+
+                    <p class="exp-section-description">
+                        Pengalaman project dan aktivitas yang membantu saya
+                        mengembangkan kemampuan teknis, kolaborasi, dan
+                        problem solving.
+                    </p>
+
+                </div>
+
+
+                <div class="exp-list">
+
+                    {% for experience in experience_list %}
+
+                        <article class="exp-card">
+
+                            <div class="exp-card-side">
+
+                                <span class="exp-category">
+                                    {{ experience.get_category_display }}
+                                </span>
+
+                                <span
+                                    class="
+                                        exp-status
+                                        {% if experience.is_ongoing %}
+                                            exp-status-active
+                                        {% else %}
+                                            exp-status-finished
+                                        {% endif %}
+                                    "
+                                >
+                                    {% if experience.is_ongoing %}
+                                        Sedang berlangsung
+                                    {% else %}
+                                        Selesai
+                                    {% endif %}
+                                </span>
+
+                            </div>
+
+
+                            <div class="exp-card-main">
+
+                                <h3>
+                                    {{ experience.title }}
+                                </h3>
+
+                                <p class="exp-description">
+                                    {{ experience.description }}
+                                </p>
+
+
+                                <div class="exp-meta">
+
+                                    <div>
+
+                                        <span>
+                                            STARTED
+                                        </span>
+
+                                        <strong>
+                                            {{ experience.started_at|date:"d M Y" }}
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            ENDED
+                                        </span>
+
+                                        <strong>
+
+                                            {% if experience.is_ongoing %}
+
+                                                Present
+
+                                            {% else %}
+
+                                                {{ experience.ended_at|date:"d M Y" }}
+
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            TYPE
+                                        </span>
+
+                                        <strong>
+                                            {{ experience.get_category_display }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                {% if experience.thumbnail %}
+
+                                    <a
+                                        href="{{ experience.thumbnail }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="exp-resource-link"
+                                    >
+                                        View Related Resource
+                                        <span>↗</span>
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+
+                    {% empty %}
+
+                        <div class="exp-empty">
+
+                            <p class="exp-eyebrow">
+                                EXPERIENCE
+                            </p>
+
+                            <h3>
+                                Journey starts here.
+                            </h3>
+
+                            <p>
+                                Belum ada pengalaman yang ditambahkan.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- ================= FOOT CTA ================= -->
+
+                <div class="exp-footer-cta">
+
+                    <div>
+
+                        <p class="exp-eyebrow">
+                            WANT TO KNOW MORE?
+                        </p>
+
+                        <h2>
+                            Explore my work.
+                        </h2>
+
+                    </div>
+
+                    <a
+                        href="{% url 'main:show_main' %}"
+                        class="exp-back-button"
+                    >
+                        ← Back to Portfolio
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-inner">
+
+            <p>
+                © 2026 {{ name }}
+            </p>
+
+            <p>
+                Experience · Personal Portfolio
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+
+</html>

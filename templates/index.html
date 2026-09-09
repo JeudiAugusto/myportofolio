@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Jeudi Augusto Asadullah - Portfolio</title>
+    <title>{{ name }} - Portfolio</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,16 +26,17 @@
     <header class="site-header">
         <div class="container navbar">
 
-            <a href="#profile" class="brand">
+            <a href="{% url 'main:show_main' %}" class="brand">
                 JA<span>.</span>
             </a>
 
             <nav class="nav-menu" aria-label="Main navigation">
-                <a href="#profile">Profile</a>
-                <a href="#about">About</a>
-                <a href="#skills">Skills</a>
-                <a href="#projects">Projects</a>
-                <a href="#contact">Contact</a>
+                <a href="{% url 'main:show_main' %}#profile">Profile</a>
+                <a href="{% url 'main:show_main' %}#about">About</a>
+                <a href="{% url 'main:show_main' %}#skills">Skills</a>
+                <a href="{% url 'main:show_main' %}#projects">Projects</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
+                <a href="{% url 'main:show_main' %}#contact">Contact</a>
             </nav>
 
         </div>
@@ -55,11 +56,11 @@
                 <div class="hero-identity">
 
                     <p class="hero-kicker">
-                        Sistem Informasi · Universitas Indonesia
+                        {{ study_program }} · Universitas Indonesia
                     </p>
 
                     <h1>
-                        Jeudi Augusto Asadullah
+                        {{ name }}
                     </h1>
 
                 </div>
@@ -72,26 +73,26 @@
                     <img
                         class="avatar"
                         src="{% static 'img/profile.jpg' %}"
-                        alt="Foto Jeudi Augusto Asadullah"
+                        alt="Foto {{ name }}"
                     >
 
                 </div>
 
 
                 <div class="hero-details">
+
                     <div class="status-badge">
                         <span class="status-dot"></span>
                         <span>Currently Learning</span>
                     </div>
 
                     <p class="bio">
-                        Halo! Saya Jeudi Augusto Asadullah, mahasiswa
-                        Sistem Informasi Universitas Indonesia yang sedang
-                        mempelajari pengembangan web menggunakan Django.
+                        {{ bio }}
                     </p>
 
 
                     <dl class="meta-list">
+
                         <div class="learning-stack">
                             <span>Python</span>
                             <span>Django</span>
@@ -101,12 +102,12 @@
 
                         <div class="meta-row">
                             <dt>NPM</dt>
-                            <dd>2506656822</dd>
+                            <dd>{{ npm }}</dd>
                         </div>
 
                         <div class="meta-row">
                             <dt>Program</dt>
-                            <dd>S1 Sistem Informasi</dd>
+                            <dd>{{ study_program }}</dd>
                         </div>
 
                     </dl>
@@ -202,6 +203,7 @@
                 <div class="skills-grid">
 
                     <article class="skill-card">
+
                         <div class="skill-header">
                             <span class="skill-number">01</span>
                             <span class="skill-level">90%</span>
@@ -214,13 +216,18 @@
                             menggunakan Python.
                         </p>
 
-                        <div class="skill-bar" aria-label="Python proficiency 90 percent">
+                        <div
+                            class="skill-bar"
+                            aria-label="Python proficiency 90 percent"
+                        >
                             <span class="skill-progress python"></span>
                         </div>
+
                     </article>
 
 
                     <article class="skill-card">
+
                         <div class="skill-header">
                             <span class="skill-number">02</span>
                             <span class="skill-level">80%</span>
@@ -233,13 +240,18 @@
                             framework Django.
                         </p>
 
-                        <div class="skill-bar" aria-label="Django proficiency 80 percent">
+                        <div
+                            class="skill-bar"
+                            aria-label="Django proficiency 80 percent"
+                        >
                             <span class="skill-progress django"></span>
                         </div>
+
                     </article>
 
 
                     <article class="skill-card">
+
                         <div class="skill-header">
                             <span class="skill-number">03</span>
                             <span class="skill-level">90%</span>
@@ -252,13 +264,18 @@
                             semantic HTML.
                         </p>
 
-                        <div class="skill-bar" aria-label="HTML5 proficiency 90 percent">
+                        <div
+                            class="skill-bar"
+                            aria-label="HTML5 proficiency 90 percent"
+                        >
                             <span class="skill-progress html"></span>
                         </div>
+
                     </article>
 
 
                     <article class="skill-card">
+
                         <div class="skill-header">
                             <span class="skill-number">04</span>
                             <span class="skill-level">85%</span>
@@ -271,9 +288,13 @@
                             dan interaction menggunakan CSS.
                         </p>
 
-                        <div class="skill-bar" aria-label="CSS3 proficiency 85 percent">
+                        <div
+                            class="skill-bar"
+                            aria-label="CSS3 proficiency 85 percent"
+                        >
                             <span class="skill-progress css"></span>
                         </div>
+
                     </article>
 
                 </div>
@@ -322,6 +343,7 @@
                         </div>
 
                         <div class="project-details">
+
                             <div>
                                 <span>ROLE</span>
                                 <strong>Developer</strong>
@@ -331,6 +353,7 @@
                                 <span>FOCUS</span>
                                 <strong>Web UI</strong>
                             </div>
+
                         </div>
 
                         <a
@@ -371,6 +394,7 @@
                         </div>
 
                         <div class="project-details">
+
                             <div>
                                 <span>ROLE</span>
                                 <strong>Team Project</strong>
@@ -380,6 +404,7 @@
                                 <span>FOCUS</span>
                                 <strong>Finance Web App</strong>
                             </div>
+
                         </div>
 
                         <a
@@ -407,13 +432,16 @@
             <div class="container contact-inner">
 
                 <div>
+
                     <p class="section-label">04</p>
 
                     <h2>
                         Let's build
                         something meaningful.
                     </h2>
+
                 </div>
+
 
                 <div class="contact-action">
 
@@ -445,11 +473,11 @@
         <div class="container footer-inner">
 
             <p>
-                © 2026 Jeudi Augusto Asadullah
+                © 2026 {{ name }}
             </p>
 
             <p>
-                Sistem Informasi · Universitas Indonesia
+                {{ study_program }} · Universitas Indonesia
             </p>
 
         </div>
