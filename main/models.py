@@ -8,6 +8,7 @@ class Experience(models.Model):
         ("internship", "Internship"),
         ("research", "Research"),
         ("volunteer", "Volunteer"),
+        ("organization", "Organization"),
         ("part-time", "Part-Time"),
         ("full-time", "Full-Time"),
         ("freelance", "Freelance"),
@@ -18,18 +19,29 @@ class Experience(models.Model):
         default=uuid.uuid4,
         editable=False,
     )
-    title = models.CharField(max_length=255)
+
+    title = models.CharField(
+        max_length=255,
+    )
+
     description = models.TextField()
+
     category = models.CharField(
         max_length=20,
         choices=EXPERIENCE_CHOICES,
         default="full-time",
     )
-    thumbnail = models.URLField(
+
+    thumbnail = models.CharField(
+        max_length=255,
         blank=True,
         null=True,
     )
-    started_at = models.DateTimeField(auto_now_add=True)
+
+    started_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
     ended_at = models.DateTimeField(
         blank=True,
         null=True,

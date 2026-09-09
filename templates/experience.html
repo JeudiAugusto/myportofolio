@@ -4,12 +4,24 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Experience - {{ name }}</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
@@ -18,9 +30,757 @@
 
     <link
         rel="stylesheet"
-        href="{% static 'css/style.css' %}?v=3"
+        href="{% static 'css/style.css' %}?v=4"
     >
+
+    <style>
+        /* =========================================================
+           EXPERIENCE PAGE
+           ========================================================= */
+
+        .exp-page {
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(217, 93, 57, 0.035),
+                    transparent 35%
+                );
+        }
+
+
+        /* ================= HERO ================= */
+
+        .exp-hero {
+            padding: 7rem 0 6rem;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        .exp-hero-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.4fr)
+                minmax(280px, 0.6fr);
+
+            gap: 6rem;
+
+            align-items: end;
+        }
+
+        .exp-eyebrow {
+            margin-bottom: 1.2rem;
+
+            color: var(--accent);
+
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .exp-hero-copy h1 {
+            max-width: 760px;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    3.7rem,
+                    7vw,
+                    6.8rem
+                );
+
+            line-height: 0.92;
+
+            letter-spacing: -0.065em;
+        }
+
+        .exp-intro {
+            max-width: 650px;
+
+            margin-top: 2.2rem;
+
+            color: var(--text-muted);
+
+            font-size: 1.08rem;
+
+            line-height: 1.8;
+        }
+
+        .exp-actions {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.8rem;
+
+            margin-top: 2.3rem;
+        }
+
+        .exp-primary-button,
+        .exp-secondary-button,
+        .exp-back-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 46px;
+
+            padding: 0.8rem 1.3rem;
+
+            border-radius: var(--radius);
+
+            font-size: 0.85rem;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            transition:
+                transform 0.2s ease,
+                background-color 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .exp-primary-button {
+            color: var(--paper);
+
+            background-color: var(--ink);
+        }
+
+        .exp-primary-button:hover {
+            background-color: var(--accent);
+
+            transform: translateY(-3px);
+        }
+
+        .exp-secondary-button {
+            color: var(--ink);
+
+            background-color: transparent;
+
+            border: 1px solid var(--line);
+        }
+
+        .exp-secondary-button:hover {
+            border-color: var(--ink);
+
+            transform: translateY(-3px);
+        }
+
+
+        /* ================= SUMMARY ================= */
+
+        .exp-summary {
+            padding: 1.7rem;
+
+            background-color: var(--card);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+        }
+
+        .exp-availability {
+            display: flex;
+
+            align-items: center;
+
+            gap: 0.7rem;
+
+            margin-bottom: 2rem;
+
+            padding-bottom: 1.4rem;
+
+            border-bottom: 1px solid var(--line);
+
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .exp-availability-dot {
+            width: 9px;
+            height: 9px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background-color: var(--accent);
+
+            box-shadow:
+                0 0 0 5px rgba(217, 93, 57, 0.12);
+
+            animation:
+                exp-pulse-status
+                1.8s
+                ease-in-out
+                infinite;
+        }
+
+        .exp-summary-item + .exp-summary-item {
+            margin-top: 1.5rem;
+        }
+
+        .exp-summary-label {
+            display: block;
+
+            margin-bottom: 0.35rem;
+
+            color: var(--text-muted);
+
+            font-size: 0.65rem;
+            font-weight: 700;
+
+            letter-spacing: 0.1em;
+        }
+
+        .exp-summary-item strong {
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size: 0.95rem;
+        }
+
+        .exp-tags {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.4rem;
+        }
+
+        .exp-tags span {
+            padding: 0.35rem 0.65rem;
+
+            background-color: var(--paper);
+
+            border: 1px solid var(--line);
+
+            border-radius: 999px;
+
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+
+        /* ================= EXPERIENCE SECTION ================= */
+
+        .exp-section {
+            padding: 7rem 0;
+        }
+
+        .exp-section-header {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 4rem;
+
+            align-items: end;
+
+            margin-bottom: 4rem;
+        }
+
+        .exp-section-header > div {
+            display: flex;
+
+            align-items: baseline;
+
+            gap: 1rem;
+        }
+
+        .exp-section-header h2 {
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    2.7rem,
+                    5vw,
+                    4.8rem
+                );
+
+            line-height: 0.95;
+
+            letter-spacing: -0.055em;
+        }
+
+        .exp-section-description {
+            max-width: 510px;
+
+            color: var(--text-muted);
+
+            line-height: 1.8;
+        }
+
+
+        /* ================= EXPERIENCE CARD ================= */
+
+        .exp-list {
+            display: grid;
+
+            gap: 1.5rem;
+        }
+
+        .exp-card {
+            display: grid;
+
+            grid-template-columns:
+                190px
+                minmax(0, 1fr);
+
+            gap: 3rem;
+
+            padding: 2.5rem;
+
+            background-color: var(--ink);
+
+            color: var(--paper);
+
+            border-radius:
+                calc(var(--radius) + 2px);
+
+            overflow: hidden;
+
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .exp-card:hover {
+            transform: translateY(-6px);
+
+            box-shadow:
+                12px 12px 0 var(--accent);
+        }
+
+        .exp-card-side {
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 1rem;
+        }
+
+        .exp-category {
+            color: #beb6ac;
+
+            font-size: 0.7rem;
+            font-weight: 700;
+
+            letter-spacing: 0.1em;
+
+            text-transform: uppercase;
+        }
+
+        .exp-status {
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 0.35rem 0.6rem;
+
+            border: 1px solid #514b46;
+
+            border-radius: 999px;
+
+            color: #d9d0c7;
+
+            font-size: 0.66rem;
+            font-weight: 700;
+        }
+
+        .exp-status-active {
+            border-color:
+                rgba(217, 93, 57, 0.7);
+
+            color: #f0a58e;
+        }
+
+        .exp-status-finished {
+            color: #c4bdb5;
+        }
+
+        .exp-card-main {
+            min-width: 0;
+        }
+
+        .exp-card-main h3 {
+            max-width: 760px;
+
+            margin-bottom: 0.5rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    2rem,
+                    4vw,
+                    3.2rem
+                );
+
+            line-height: 1;
+
+            letter-spacing: -0.045em;
+        }
+
+        .exp-organization {
+            margin-bottom: 1.7rem;
+
+            color: #aaa198;
+
+            font-size: 0.82rem;
+            font-weight: 700;
+
+            letter-spacing: 0.07em;
+
+            text-transform: uppercase;
+        }
+
+
+        /* ================= EXPERIENCE PHOTO ================= */
+
+        .exp-media {
+            position: relative;
+
+            width: 100%;
+
+            margin:
+                1.8rem
+                0
+                2rem;
+
+            aspect-ratio: 16 / 9;
+
+            overflow: hidden;
+
+            border:
+                1px solid
+                #514b46;
+
+            border-radius: var(--radius);
+
+            background-color: #292522;
+        }
+
+        .exp-image {
+            display: block;
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            object-position:
+                center 43%;
+
+            transition:
+                transform 0.5s ease,
+                filter 0.5s ease;
+        }
+
+        .exp-card:hover .exp-image {
+            transform: scale(1.025);
+        }
+
+        .exp-photo-caption {
+            position: absolute;
+
+            left: 1rem;
+            bottom: 1rem;
+
+            max-width:
+                calc(100% - 2rem);
+
+            padding:
+                0.5rem
+                0.75rem;
+
+            background:
+                rgba(
+                    28,
+                    25,
+                    23,
+                    0.82
+                );
+
+            backdrop-filter: blur(8px);
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.15
+                );
+
+            border-radius: 6px;
+
+            color: #eee7df;
+
+            font-size: 0.68rem;
+            font-weight: 600;
+
+            line-height: 1.4;
+        }
+
+
+        /* ================= DESCRIPTION ================= */
+
+        .exp-description {
+            max-width: 720px;
+
+            color: #ccc4ba;
+
+            line-height: 1.75;
+        }
+
+
+        /* ================= META ================= */
+
+        .exp-meta {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 1rem;
+
+            margin-top: 2.5rem;
+        }
+
+        .exp-meta > div {
+            padding-top: 1rem;
+
+            border-top:
+                1px solid
+                #514b46;
+        }
+
+        .exp-meta span {
+            display: block;
+
+            margin-bottom: 0.35rem;
+
+            color: #958c83;
+
+            font-size: 0.63rem;
+            font-weight: 700;
+
+            letter-spacing: 0.1em;
+        }
+
+        .exp-meta strong {
+            font-size: 0.83rem;
+        }
+
+
+        /* ================= EMPTY STATE ================= */
+
+        .exp-empty {
+            padding: 4rem;
+
+            border:
+                1px dashed
+                var(--line);
+
+            border-radius: var(--radius);
+
+            text-align: center;
+        }
+
+        .exp-empty h3 {
+            margin-bottom: 0.6rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size: 2rem;
+        }
+
+        .exp-empty p:last-child {
+            color: var(--text-muted);
+        }
+
+
+        /* ================= BOTTOM CTA ================= */
+
+        .exp-footer-cta {
+            display: flex;
+
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 3rem;
+
+            margin-top: 5rem;
+
+            padding-top: 3rem;
+
+            border-top:
+                1px solid
+                var(--line);
+        }
+
+        .exp-footer-cta h2 {
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    2rem,
+                    4vw,
+                    3.5rem
+                );
+
+            line-height: 1;
+
+            letter-spacing: -0.05em;
+        }
+
+        .exp-back-button {
+            color: var(--paper);
+
+            background-color: var(--ink);
+
+            white-space: nowrap;
+        }
+
+        .exp-back-button:hover {
+            background-color: var(--accent);
+
+            transform: translateY(-3px);
+        }
+
+
+        /* ================= ACTIVE NAV ================= */
+
+        .nav-menu .nav-active::after {
+            width: 100%;
+        }
+
+
+        /* ================= ANIMATION ================= */
+
+        @keyframes exp-pulse-status {
+            0%,
+            100% {
+                opacity: 1;
+
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.45;
+
+                transform: scale(0.8);
+            }
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .exp-hero-grid {
+                grid-template-columns: 1fr;
+
+                gap: 3rem;
+            }
+
+            .exp-summary {
+                max-width: 520px;
+            }
+
+            .exp-section-header {
+                grid-template-columns: 1fr;
+
+                gap: 1.5rem;
+            }
+
+            .exp-card {
+                grid-template-columns: 1fr;
+
+                gap: 1.5rem;
+            }
+
+            .exp-card-side {
+                flex-direction: row;
+
+                align-items: center;
+
+                justify-content:
+                    space-between;
+            }
+
+            .exp-media {
+                aspect-ratio: 16 / 10;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .exp-hero {
+                padding: 4.5rem 0;
+            }
+
+            .exp-hero-copy h1 {
+                font-size:
+                    clamp(
+                        3rem,
+                        15vw,
+                        4.7rem
+                    );
+            }
+
+            .exp-section {
+                padding: 5rem 0;
+            }
+
+            .exp-card {
+                padding: 1.5rem;
+            }
+
+            .exp-card-side {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .exp-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .exp-media {
+                aspect-ratio: 4 / 3;
+            }
+
+            .exp-footer-cta {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                margin-top: 3.5rem;
+            }
+        }
+    </style>
 </head>
+
 
 <body>
 
@@ -30,25 +790,40 @@
 
         <div class="container navbar">
 
-            <a href="{% url 'main:show_main' %}" class="brand">
+            <a
+                href="{% url 'main:show_main' %}"
+                class="brand"
+            >
                 JA<span>.</span>
             </a>
 
-            <nav class="nav-menu" aria-label="Main navigation">
 
-                <a href="{% url 'main:show_main' %}#profile">
+            <nav
+                class="nav-menu"
+                aria-label="Main navigation"
+            >
+
+                <a
+                    href="{% url 'main:show_main' %}#profile"
+                >
                     Profile
                 </a>
 
-                <a href="{% url 'main:show_main' %}#about">
+                <a
+                    href="{% url 'main:show_main' %}#about"
+                >
                     About
                 </a>
 
-                <a href="{% url 'main:show_main' %}#skills">
+                <a
+                    href="{% url 'main:show_main' %}#skills"
+                >
                     Skills
                 </a>
 
-                <a href="{% url 'main:show_main' %}#projects">
+                <a
+                    href="{% url 'main:show_main' %}#projects"
+                >
                     Projects
                 </a>
 
@@ -59,7 +834,9 @@
                     Experience
                 </a>
 
-                <a href="{% url 'main:show_main' %}#contact">
+                <a
+                    href="{% url 'main:show_main' %}#contact"
+                >
                     Contact
                 </a>
 
@@ -70,15 +847,17 @@
     </header>
 
 
-    <!-- ================= MAIN ================= -->
+    <!-- ================= PAGE ================= -->
 
     <main class="exp-page">
+
 
         <!-- ================= HERO ================= -->
 
         <section class="exp-hero">
 
             <div class="container exp-hero-grid">
+
 
                 <div class="exp-hero-copy">
 
@@ -92,10 +871,12 @@
                     </h1>
 
                     <p class="exp-intro">
-                        Saya {{ name }}, mahasiswa Sistem Informasi Universitas
-                        Indonesia yang berfokus pada web development, software
-                        engineering, dan pengembangan produk digital.
+                        Saya {{ name }}, mahasiswa Sistem Informasi
+                        Universitas Indonesia yang berfokus pada
+                        pengembangan web, software engineering,
+                        dan pengembangan produk digital.
                     </p>
+
 
                     <div class="exp-actions">
 
@@ -122,7 +903,9 @@
 
                     <div class="exp-availability">
 
-                        <span class="exp-availability-dot"></span>
+                        <span
+                            class="exp-availability-dot"
+                        ></span>
 
                         <span>
                             Open to Internship Opportunities
@@ -164,12 +947,10 @@
                         </span>
 
                         <div class="exp-tags">
-
                             <span>Backend</span>
                             <span>Web</span>
                             <span>Product</span>
                             <span>Software</span>
-
                         </div>
 
                     </div>
@@ -181,11 +962,12 @@
         </section>
 
 
-        <!-- ================= EXPERIENCE LIST ================= -->
+        <!-- ================= EXPERIENCE ================= -->
 
         <section class="exp-section">
 
             <div class="container">
+
 
                 <div class="exp-section-header">
 
@@ -201,9 +983,11 @@
 
                     </div>
 
+
                     <p class="exp-section-description">
-                        Pengalaman project dan aktivitas yang membantu saya
-                        mengembangkan kemampuan teknis, kolaborasi, dan
+                        Pengalaman organisasi, project, dan aktivitas
+                        yang membantu saya mengembangkan kemampuan
+                        teknis, kolaborasi, komunikasi, dan
                         problem solving.
                     </p>
 
@@ -212,9 +996,13 @@
 
                 <div class="exp-list">
 
+
                     {% for experience in experience_list %}
 
                         <article class="exp-card">
+
+
+                            <!-- LEFT COLUMN -->
 
                             <div class="exp-card-side">
 
@@ -222,9 +1010,11 @@
                                     {{ experience.get_category_display }}
                                 </span>
 
+
                                 <span
                                     class="
                                         exp-status
+
                                         {% if experience.is_ongoing %}
                                             exp-status-active
                                         {% else %}
@@ -232,21 +1022,67 @@
                                         {% endif %}
                                     "
                                 >
+
                                     {% if experience.is_ongoing %}
+
                                         Sedang berlangsung
+
                                     {% else %}
+
                                         Selesai
+
                                     {% endif %}
+
                                 </span>
 
                             </div>
 
 
+                            <!-- MAIN CONTENT -->
+
                             <div class="exp-card-main">
+
 
                                 <h3>
                                     {{ experience.title }}
                                 </h3>
+
+
+                                {% if experience.category == "organization" %}
+
+                                    <p class="exp-organization">
+                                        BEM Fasilkom UI 2026
+                                    </p>
+
+                                {% endif %}
+
+
+                                {% if experience.thumbnail %}
+
+                                    <figure class="exp-media">
+
+                                        <img
+                                            src="{% static experience.thumbnail %}"
+                                            alt="Kegiatan {{ experience.title }} BEM Fasilkom UI 2026"
+                                            class="exp-image"
+                                        >
+
+                                        {% if experience.category == "organization" %}
+
+                                            <figcaption
+                                                class="exp-photo-caption"
+                                            >
+                                                Kegiatan bersama Departemen
+                                                Kajian dan Aksi Strategis
+                                                BEM Fasilkom UI 2026
+                                            </figcaption>
+
+                                        {% endif %}
+
+                                    </figure>
+
+                                {% endif %}
+
 
                                 <p class="exp-description">
                                     {{ experience.description }}
@@ -254,6 +1090,7 @@
 
 
                                 <div class="exp-meta">
+
 
                                     <div>
 
@@ -303,22 +1140,8 @@
 
                                     </div>
 
+
                                 </div>
-
-
-                                {% if experience.thumbnail %}
-
-                                    <a
-                                        href="{{ experience.thumbnail }}"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="exp-resource-link"
-                                    >
-                                        View Related Resource
-                                        <span>↗</span>
-                                    </a>
-
-                                {% endif %}
 
                             </div>
 
@@ -345,10 +1168,11 @@
 
                     {% endfor %}
 
+
                 </div>
 
 
-                <!-- ================= FOOT CTA ================= -->
+                <!-- ================= BOTTOM CTA ================= -->
 
                 <div class="exp-footer-cta">
 
@@ -364,6 +1188,7 @@
 
                     </div>
 
+
                     <a
                         href="{% url 'main:show_main' %}"
                         class="exp-back-button"
@@ -372,6 +1197,7 @@
                     </a>
 
                 </div>
+
 
             </div>
 
@@ -399,5 +1225,4 @@
     </footer>
 
 </body>
-
 </html>
