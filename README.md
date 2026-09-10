@@ -10,7 +10,7 @@ Website ini menampilkan profil pribadi, keterampilan, project yang pernah saya k
 
 - **Nama:** Jeudi Augusto Asadullah
 - **NPM:** 2506656822
-- **Kelas:** PBP B
+- **Kelas:** PBP C
 - **Program Studi:** S1 Sistem Informasi
 - **Universitas:** Universitas Indonesia
 
@@ -436,4 +436,41 @@ https://pbp.cs.ui.ac.id/
 
 **Jeudi Augusto Asadullah**
 S1 Sistem Informasi - Universitas Indonesia
-PBP B - Gasal 2026/2027
+PBP C - Gasal 2026/2027
+
+
+---
+
+### Tugas 2
+
+1. **Jelaskan bagaimana alur request dari pengguna hingga data model dapat ditampilkan pada halaman melalui MVT.**
+
+   Ketika pengguna membuka halaman `/projects/`, request pertama kali masuk ke `portofolio/urls.py`. Dari sana request diteruskan ke `main/urls.py` menggunakan `include()`.
+
+   Pada `main/urls.py`, path `projects/` diarahkan ke view `show_projects`. View tersebut mengambil data dari model `Project` menggunakan Django ORM dengan `Project.objects.all().order_by("-year", "title")`.
+
+   Hasil query dimasukkan ke context dengan nama `project_list`, kemudian dikirim ke `projects.html` menggunakan fungsi `render()`.
+
+   Pada template, data ditampilkan dengan Django Template Language melalui loop `{% for project in project_list %}`. Jadi alurnya adalah browser -> project URL -> app URL -> view -> model dan database -> context -> template -> HTML response.
+
+   Menurut saya pembagian MVT membuat fungsi setiap bagian lebih jelas. URL menentukan request diarahkan ke mana, view menangani logic dan pengambilan data, model merepresentasikan data di database, sedangkan template bertugas menampilkan hasilnya.
+
+2. **Mengapa data lebih baik disimpan pada model dibandingkan ditulis secara hard-coded pada template?**
+
+   Pada Tugas 1, data Personal Portfolio dan Cashie masih saya tulis langsung di `index.html`. Cara tersebut masih cukup ketika jumlah project sedikit, tetapi setiap ingin mengubah atau menambah project saya harus mengedit HTML secara langsung.
+
+   Pada Tugas 2, data tersebut saya pindahkan ke model `Project`. Dengan begitu data dan tampilan menjadi terpisah. Template hanya menentukan bentuk tampilan project, sedangkan isi seperti title, description, year, role, focus, technologies, dan repository URL disimpan pada database.
+
+   Satu template juga dapat digunakan untuk menampilkan banyak object menggunakan loop. Data dapat diurutkan menggunakan `Project.objects.all().order_by("-year", "title")`, sehingga urutan project tidak perlu diatur secara manual di HTML.
+
+   Menurut saya struktur ini lebih mudah dikembangkan. Ke depannya data Project dapat dikelola melalui Django Admin atau form tanpa perlu mengubah template setiap kali ada project baru.
+
+3. **Apa perbedaan `makemigrations` dan `migrate`? Berikan contoh berdasarkan perubahan model pada project.**
+
+   `makemigrations` digunakan untuk membaca perubahan pada model Django kemudian membuat file migration yang berisi instruksi perubahan struktur database.
+
+   Ketika saya menambahkan model `Project`, saya menjalankan `python manage.py makemigrations`. Django kemudian menghasilkan file `main/migrations/0004_project.py`.
+
+   Pada tahap tersebut perubahan belum diterapkan ke database. Setelah itu saya menjalankan `python manage.py migrate`. Migration `0004_project` kemudian diterapkan sehingga struktur tabel untuk Project dibuat pada database.
+
+   Jadi yang saya pahami, `makemigrations` membuat catatan atau instruksi perubahan schema berdasarkan model Django, sedangkan `migrate` menerapkan instruksi tersebut ke database.
