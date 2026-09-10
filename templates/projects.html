@@ -1,0 +1,1011 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Projects - {{ name }}</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}?v=5"
+    >
+
+    <style>
+        /* =========================================================
+           PROJECTS PAGE
+           ========================================================= */
+
+        .projects-page {
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(217, 93, 57, 0.035),
+                    transparent 32%
+                );
+        }
+
+
+        /* ================= HERO ================= */
+
+        .projects-hero {
+            padding: 7rem 0 6rem;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        .projects-hero-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.35fr)
+                minmax(280px, 0.65fr);
+
+            gap: 6rem;
+
+            align-items: end;
+        }
+
+        .projects-eyebrow {
+            margin-bottom: 1.2rem;
+
+            color: var(--accent);
+
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            letter-spacing: 0.14em;
+
+            text-transform: uppercase;
+        }
+
+        .projects-hero h1 {
+            max-width: 780px;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    3.7rem,
+                    7vw,
+                    6.8rem
+                );
+
+            line-height: 0.92;
+
+            letter-spacing: -0.065em;
+        }
+
+        .projects-intro {
+            max-width: 650px;
+
+            margin-top: 2.2rem;
+
+            color: var(--text-muted);
+
+            font-size: 1.08rem;
+
+            line-height: 1.8;
+        }
+
+
+        /* ================= HERO SUMMARY ================= */
+
+        .projects-summary {
+            padding: 1.8rem;
+
+            background-color: var(--card);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+        }
+
+        .projects-summary-top {
+            margin-bottom: 1.7rem;
+
+            padding-bottom: 1.4rem;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        .projects-summary-top span {
+            color: var(--accent);
+
+            font-size: 0.68rem;
+            font-weight: 700;
+
+            letter-spacing: 0.1em;
+
+            text-transform: uppercase;
+        }
+
+        .projects-summary-top h2 {
+            margin-top: 0.45rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size: 1.5rem;
+
+            letter-spacing: -0.04em;
+        }
+
+        .projects-summary-item + .projects-summary-item {
+            margin-top: 1.3rem;
+        }
+
+        .projects-summary-label {
+            display: block;
+
+            margin-bottom: 0.3rem;
+
+            color: var(--text-muted);
+
+            font-size: 0.63rem;
+            font-weight: 700;
+
+            letter-spacing: 0.1em;
+        }
+
+        .projects-summary-item strong {
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size: 0.92rem;
+        }
+
+
+        /* ================= PROJECT SECTION ================= */
+
+        .projects-section {
+            padding: 7rem 0;
+        }
+
+        .projects-section-header {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 4rem;
+
+            align-items: end;
+
+            margin-bottom: 4rem;
+        }
+
+        .projects-heading {
+            display: flex;
+
+            align-items: baseline;
+
+            gap: 1rem;
+        }
+
+        .projects-heading h2 {
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    2.7rem,
+                    5vw,
+                    4.8rem
+                );
+
+            line-height: 0.95;
+
+            letter-spacing: -0.055em;
+        }
+
+        .projects-section-description {
+            max-width: 510px;
+
+            color: var(--text-muted);
+
+            line-height: 1.8;
+        }
+
+
+        /* ================= PROJECT LIST ================= */
+
+        .projects-list {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 1.5rem;
+        }
+
+
+        /* ================= PROJECT CARD ================= */
+
+        .work-card {
+            position: relative;
+
+            display: flex;
+
+            flex-direction: column;
+
+            min-height: 480px;
+
+            padding: 2.2rem;
+
+            overflow: hidden;
+
+            background-color: var(--ink);
+
+            color: var(--paper);
+
+            border-radius:
+                calc(var(--radius) + 2px);
+
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .work-card:hover {
+            transform: translateY(-7px);
+
+            box-shadow:
+                11px 11px 0 var(--accent);
+        }
+
+        .work-card-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 1rem;
+
+            margin-bottom: 4rem;
+
+            color: #aaa198;
+
+            font-size: 0.68rem;
+            font-weight: 700;
+
+            letter-spacing: 0.1em;
+
+            text-transform: uppercase;
+        }
+
+        .work-number {
+            color: var(--accent);
+        }
+
+        .work-card h3 {
+            max-width: 520px;
+
+            margin-bottom: 1rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    2.2rem,
+                    4vw,
+                    3.3rem
+                );
+
+            line-height: 0.95;
+
+            letter-spacing: -0.05em;
+        }
+
+        .work-description {
+            max-width: 570px;
+
+            margin-bottom: 2rem;
+
+            color: #cfc7bd;
+
+            line-height: 1.75;
+        }
+
+
+        /* ================= TECHNOLOGY ================= */
+
+        .work-tech {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.45rem;
+
+            margin-bottom: 2.3rem;
+        }
+
+        .work-tech span {
+            padding:
+                0.38rem
+                0.7rem;
+
+            color: #ddd5cc;
+
+            border:
+                1px solid
+                #514b46;
+
+            border-radius: 999px;
+
+            font-size: 0.66rem;
+            font-weight: 700;
+
+            letter-spacing: 0.04em;
+
+            text-transform: uppercase;
+
+            transition:
+                border-color 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .work-card:hover .work-tech span {
+            color: var(--paper);
+
+            border-color: var(--accent);
+        }
+
+
+        /* ================= PROJECT META ================= */
+
+        .work-meta {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 1rem;
+
+            margin-top: auto;
+        }
+
+        .work-meta div {
+            padding-top: 1rem;
+
+            border-top:
+                1px solid
+                #514b46;
+        }
+
+        .work-meta span {
+            display: block;
+
+            margin-bottom: 0.3rem;
+
+            color: #958c83;
+
+            font-size: 0.61rem;
+            font-weight: 700;
+
+            letter-spacing: 0.1em;
+        }
+
+        .work-meta strong {
+            font-size: 0.82rem;
+        }
+
+
+        /* ================= PROJECT LINK ================= */
+
+        .work-link {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 1rem;
+
+            margin-top: 2rem;
+
+            padding-top: 1.2rem;
+
+            color: var(--paper);
+
+            border-top:
+                1px solid
+                #514b46;
+
+            font-size: 0.8rem;
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+        .work-link span {
+            color: var(--accent);
+
+            font-size: 1rem;
+
+            transition:
+                transform 0.2s ease;
+        }
+
+        .work-link:hover span {
+            transform:
+                translate(
+                    3px,
+                    -3px
+                );
+        }
+
+
+        /* ================= EMPTY STATE ================= */
+
+        .projects-empty {
+            grid-column: 1 / -1;
+
+            padding: 5rem 2rem;
+
+            border:
+                1px dashed
+                var(--line);
+
+            border-radius: var(--radius);
+
+            text-align: center;
+        }
+
+        .projects-empty h3 {
+            margin-bottom: 0.6rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size: 2rem;
+        }
+
+        .projects-empty p:last-child {
+            color: var(--text-muted);
+        }
+
+
+        /* ================= BOTTOM CTA ================= */
+
+        .projects-footer-cta {
+            display: flex;
+
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 3rem;
+
+            margin-top: 5rem;
+
+            padding-top: 3rem;
+
+            border-top: 1px solid var(--line);
+        }
+
+        .projects-footer-cta h2 {
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    2rem,
+                    4vw,
+                    3.5rem
+                );
+
+            line-height: 1;
+
+            letter-spacing: -0.05em;
+        }
+
+        .projects-back-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 46px;
+
+            padding:
+                0.8rem
+                1.3rem;
+
+            color: var(--paper);
+
+            background-color: var(--ink);
+
+            border-radius: var(--radius);
+
+            font-size: 0.85rem;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            white-space: nowrap;
+
+            transition:
+                transform 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        .projects-back-button:hover {
+            background-color: var(--accent);
+
+            transform: translateY(-3px);
+        }
+
+
+        /* ================= ACTIVE NAV ================= */
+
+        .nav-menu .nav-active::after {
+            width: 100%;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .projects-hero-grid {
+                grid-template-columns: 1fr;
+
+                gap: 3rem;
+            }
+
+            .projects-summary {
+                max-width: 520px;
+            }
+
+            .projects-section-header {
+                grid-template-columns: 1fr;
+
+                gap: 1.5rem;
+            }
+
+            .projects-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .projects-hero {
+                padding: 4.5rem 0;
+            }
+
+            .projects-hero h1 {
+                font-size:
+                    clamp(
+                        3rem,
+                        15vw,
+                        4.7rem
+                    );
+            }
+
+            .projects-section {
+                padding: 5rem 0;
+            }
+
+            .work-card {
+                min-height: auto;
+
+                padding: 1.5rem;
+            }
+
+            .work-card-top {
+                margin-bottom: 3rem;
+            }
+
+            .work-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-footer-cta {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                margin-top: 3.5rem;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="site-header">
+
+        <div class="container navbar">
+
+            <a
+                href="{% url 'main:show_main' %}"
+                class="brand"
+            >
+                JA<span>.</span>
+            </a>
+
+
+            <nav
+                class="nav-menu"
+                aria-label="Main navigation"
+            >
+
+                <a
+                    href="{% url 'main:show_main' %}#profile"
+                >
+                    Profile
+                </a>
+
+                <a
+                    href="{% url 'main:show_main' %}#about"
+                >
+                    About
+                </a>
+
+                <a
+                    href="{% url 'main:show_main' %}#skills"
+                >
+                    Skills
+                </a>
+
+                <a
+                    href="{% url 'main:show_projects' %}"
+                    class="nav-active"
+                >
+                    Projects
+                </a>
+
+                <a
+                    href="{% url 'main:show_experience' %}"
+                >
+                    Experience
+                </a>
+
+                <a
+                    href="{% url 'main:show_main' %}#contact"
+                >
+                    Contact
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= PAGE ================= -->
+
+    <main class="projects-page">
+
+
+        <!-- ================= HERO ================= -->
+
+        <section class="projects-hero">
+
+            <div class="container projects-hero-grid">
+
+
+                <div>
+
+                    <p class="projects-eyebrow">
+                        SELECTED WORK
+                    </p>
+
+                    <h1>
+                        Ideas turned
+                        into products.
+                    </h1>
+
+                    <p class="projects-intro">
+                        Kumpulan project yang saya kerjakan untuk
+                        mengembangkan kemampuan dalam web development,
+                        software engineering, dan pemecahan masalah
+                        melalui teknologi.
+                    </p>
+
+                </div>
+
+
+                <aside class="projects-summary">
+
+                    <div class="projects-summary-top">
+
+                        <span>
+                            PROJECT PORTFOLIO
+                        </span>
+
+                        <h2>
+                            Learning through building.
+                        </h2>
+
+                    </div>
+
+
+                    <div class="projects-summary-item">
+
+                        <span class="projects-summary-label">
+                            CURRENT FOCUS
+                        </span>
+
+                        <strong>
+                            Web Development
+                        </strong>
+
+                    </div>
+
+
+                    <div class="projects-summary-item">
+
+                        <span class="projects-summary-label">
+                            APPROACH
+                        </span>
+
+                        <strong>
+                            Build · Test · Improve
+                        </strong>
+
+                    </div>
+
+
+                    <div class="projects-summary-item">
+
+                        <span class="projects-summary-label">
+                            STUDY
+                        </span>
+
+                        <strong>
+                            Information Systems · UI
+                        </strong>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PROJECTS ================= -->
+
+        <section class="projects-section">
+
+            <div class="container">
+
+
+                <div class="projects-section-header">
+
+                    <div class="projects-heading">
+
+                        <p class="section-label">
+                            03
+                        </p>
+
+                        <h2>
+                            Projects
+                        </h2>
+
+                    </div>
+
+
+                    <p class="projects-section-description">
+                        Beberapa project yang menjadi bagian dari
+                        perjalanan saya dalam mempelajari pengembangan
+                        aplikasi dan membangun solusi digital.
+                    </p>
+
+                </div>
+
+
+                <!-- ================= DYNAMIC PROJECT LIST ================= -->
+
+                <div class="projects-list">
+
+
+                    {% for project in project_list %}
+
+                        <article class="work-card">
+
+
+                            <div class="work-card-top">
+
+                                <span class="work-number">
+                                    PROJECT {{ forloop.counter|stringformat:"02d" }}
+                                </span>
+
+                                <span>
+                                    {{ project.year }}
+                                </span>
+
+                            </div>
+
+
+                            <h3>
+                                {{ project.title }}
+                            </h3>
+
+
+                            <p class="work-description">
+                                {{ project.description }}
+                            </p>
+
+
+                            <div class="work-tech">
+
+                                {% for technology in project.technology_list %}
+
+                                    <span>
+                                        {{ technology }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="work-meta">
+
+
+                                <div>
+
+                                    <span>
+                                        ROLE
+                                    </span>
+
+                                    <strong>
+                                        {{ project.role }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        FOCUS
+                                    </span>
+
+                                    <strong>
+                                        {{ project.focus }}
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+
+                            {% if project.repository_url %}
+
+                                <a
+                                    href="{{ project.repository_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="work-link"
+                                >
+                                    View Repository
+
+                                    <span>
+                                        ↗
+                                    </span>
+                                </a>
+
+                            {% endif %}
+
+
+                        </article>
+
+
+                    {% empty %}
+
+                        <div class="projects-empty">
+
+                            <p class="projects-eyebrow">
+                                PROJECTS
+                            </p>
+
+                            <h3>
+                                Nothing here yet.
+                            </h3>
+
+                            <p>
+                                Belum ada project yang ditambahkan.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+
+                </div>
+
+
+                <!-- ================= BOTTOM CTA ================= -->
+
+                <div class="projects-footer-cta">
+
+                    <div>
+
+                        <p class="projects-eyebrow">
+                            MORE ABOUT ME
+                        </p>
+
+                        <h2>
+                            Beyond the projects.
+                        </h2>
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'main:show_experience' %}"
+                        class="projects-back-button"
+                    >
+                        View Experience →
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-inner">
+
+            <p>
+                © 2026 {{ name }}
+            </p>
+
+            <p>
+                Projects · Personal Portfolio
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>
