@@ -7,6 +7,11 @@ from main.models import Experience, Project
 
 class MainTest(TestCase):
     def setUp(self):
+        # Bersihkan data yang mungkin dibuat oleh data migration
+        # agar setiap test memiliki kondisi awal yang terkontrol.
+        Experience.objects.all().delete()
+        Project.objects.all().delete()
+
         self.experience = Experience.objects.create(
             title="Staff Kajian dan Aksi Strategis",
             description=(
