@@ -53,3 +53,47 @@ class Experience(models.Model):
     @property
     def is_ongoing(self):
         return self.ended_at is None
+
+
+class Project(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    title = models.CharField(
+        max_length=255,
+    )
+
+    description = models.TextField()
+
+    year = models.PositiveIntegerField()
+
+    role = models.CharField(
+        max_length=100,
+    )
+
+    focus = models.CharField(
+        max_length=150,
+    )
+
+    technologies = models.CharField(
+        max_length=500,
+    )
+
+    repository_url = models.URLField(
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def technology_list(self):
+        return [
+            technology.strip()
+            for technology in self.technologies.split(",")
+            if technology.strip()
+        ]
