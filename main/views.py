@@ -13,6 +13,7 @@ def show_main(request):
             "Universitas Indonesia yang sedang mempelajari pengembangan web "
             "menggunakan Django."
         ),
+        "project_list": Project.objects.all().order_by("-year", "title"),
     }
 
     return render(request, "index.html", context)

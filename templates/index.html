@@ -16,30 +16,131 @@
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}?v=6"
+    >
+
+    <style>
+        .projects-section-top {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .projects-section-top .section-heading {
+            margin-bottom: 0;
+        }
+
+        .view-all-projects {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            padding: 0.8rem 1.15rem;
+
+            color: var(--paper);
+            background-color: var(--ink);
+
+            border-radius: var(--radius);
+
+            font-size: 0.8rem;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            transition:
+                background-color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .view-all-projects:hover {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .homepage-project-empty {
+            grid-column: 1 / -1;
+
+            padding: 3rem;
+
+            border: 1px dashed var(--line);
+            border-radius: var(--radius);
+
+            text-align: center;
+        }
+
+        .homepage-project-empty h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .homepage-project-empty p {
+            margin-bottom: 0;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 600px) {
+            .projects-section-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
+
 
 <body>
 
     <!-- ================= HEADER ================= -->
 
     <header class="site-header">
+
         <div class="container navbar">
 
-            <a href="{% url 'main:show_main' %}" class="brand">
+            <a
+                href="{% url 'main:show_main' %}"
+                class="brand"
+            >
                 JA<span>.</span>
             </a>
 
-            <nav class="nav-menu" aria-label="Main navigation">
-                <a href="{% url 'main:show_main' %}#profile">Profile</a>
-                <a href="{% url 'main:show_main' %}#about">About</a>
-                <a href="{% url 'main:show_main' %}#skills">Skills</a>
-                <a href="{% url 'main:show_main' %}#projects">Projects</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_main' %}#contact">Contact</a>
+
+            <nav
+                class="nav-menu"
+                aria-label="Main navigation"
+            >
+
+                <a href="{% url 'main:show_main' %}#profile">
+                    Profile
+                </a>
+
+                <a href="{% url 'main:show_main' %}#about">
+                    About
+                </a>
+
+                <a href="{% url 'main:show_main' %}#skills">
+                    Skills
+                </a>
+
+                <a href="{% url 'main:show_projects' %}">
+                    Projects
+                </a>
+
+                <a href="{% url 'main:show_experience' %}">
+                    Experience
+                </a>
+
+                <a href="{% url 'main:show_main' %}#contact">
+                    Contact
+                </a>
+
             </nav>
 
         </div>
+
     </header>
 
 
@@ -47,11 +148,16 @@
 
     <main>
 
+
         <!-- ================= HERO ================= -->
 
-        <section class="hero" id="profile">
+        <section
+            class="hero"
+            id="profile"
+        >
 
             <div class="container hero-grid">
+
 
                 <div class="hero-identity">
 
@@ -82,9 +188,15 @@
                 <div class="hero-details">
 
                     <div class="status-badge">
+
                         <span class="status-dot"></span>
-                        <span>Currently Learning</span>
+
+                        <span>
+                            Currently Learning
+                        </span>
+
                     </div>
+
 
                     <p class="bio">
                         {{ bio }}
@@ -93,27 +205,48 @@
 
                     <dl class="meta-list">
 
+
                         <div class="learning-stack">
+
                             <span>Python</span>
                             <span>Django</span>
                             <span>HTML5</span>
                             <span>CSS3</span>
+
                         </div>
 
-                        <div class="meta-row">
-                            <dt>NPM</dt>
-                            <dd>{{ npm }}</dd>
-                        </div>
 
                         <div class="meta-row">
-                            <dt>Program</dt>
-                            <dd>{{ study_program }}</dd>
+
+                            <dt>
+                                NPM
+                            </dt>
+
+                            <dd>
+                                {{ npm }}
+                            </dd>
+
                         </div>
+
+
+                        <div class="meta-row">
+
+                            <dt>
+                                Program
+                            </dt>
+
+                            <dd>
+                                {{ study_program }}
+                            </dd>
+
+                        </div>
+
 
                     </dl>
 
 
                     <div class="social-links">
+
 
                         <a
                             href="https://github.com/JeudiAugusto"
@@ -124,6 +257,7 @@
                             GitHub
                         </a>
 
+
                         <a
                             href="https://www.linkedin.com/in/jeudi-augusto-asadullah/"
                             class="social-link"
@@ -133,12 +267,14 @@
                             LinkedIn
                         </a>
 
+
                         <a
                             href="mailto:jeudiaugustoasadullah@gmail.com"
                             class="social-link"
                         >
                             Email
                         </a>
+
 
                     </div>
 
@@ -151,18 +287,32 @@
 
         <!-- ================= ABOUT ================= -->
 
-        <section class="content-section" id="about">
+        <section
+            class="content-section"
+            id="about"
+        >
 
             <div class="container">
 
+
                 <div class="section-heading">
-                    <p class="section-label">01</p>
-                    <h2>About Me</h2>
+
+                    <p class="section-label">
+                        01
+                    </p>
+
+                    <h2>
+                        About Me
+                    </h2>
+
                 </div>
+
 
                 <div class="about-grid">
 
+
                     <div>
+
                         <p class="large-text">
                             Saya adalah mahasiswa Sistem Informasi
                             Universitas Indonesia yang tertarik pada
@@ -170,9 +320,12 @@
                             sebuah produk digital dapat menyelesaikan
                             masalah nyata.
                         </p>
+
                     </div>
 
+
                     <div>
+
                         <p>
                             Saat ini saya sedang memperdalam pemrograman
                             berbasis platform menggunakan Python dan Django.
@@ -180,7 +333,9 @@
                             proses belajar saya dalam memahami pengembangan
                             aplikasi web secara lebih terstruktur.
                         </p>
+
                     </div>
+
 
                 </div>
 
@@ -191,111 +346,197 @@
 
         <!-- ================= SKILLS ================= -->
 
-        <section class="content-section" id="skills">
+        <section
+            class="content-section"
+            id="skills"
+        >
 
             <div class="container">
 
+
                 <div class="section-heading">
-                    <p class="section-label">02</p>
-                    <h2>Skills</h2>
+
+                    <p class="section-label">
+                        02
+                    </p>
+
+                    <h2>
+                        Skills
+                    </h2>
+
                 </div>
 
+
                 <div class="skills-grid">
+
+
+                    <!-- PYTHON -->
 
                     <article class="skill-card">
 
                         <div class="skill-header">
-                            <span class="skill-number">01</span>
-                            <span class="skill-level">90%</span>
+
+                            <span class="skill-number">
+                                01
+                            </span>
+
+                            <span class="skill-level">
+                                90%
+                            </span>
+
                         </div>
 
-                        <h3>Python</h3>
+
+                        <h3>
+                            Python
+                        </h3>
+
 
                         <p>
-                            Dasar pemrograman dan pengembangan aplikasi
-                            menggunakan Python.
+                            Dasar pemrograman dan pengembangan
+                            aplikasi menggunakan Python.
                         </p>
+
 
                         <div
                             class="skill-bar"
                             aria-label="Python proficiency 90 percent"
                         >
-                            <span class="skill-progress python"></span>
+
+                            <span
+                                class="skill-progress python"
+                            ></span>
+
                         </div>
 
                     </article>
 
 
+                    <!-- DJANGO -->
+
                     <article class="skill-card">
 
                         <div class="skill-header">
-                            <span class="skill-number">02</span>
-                            <span class="skill-level">80%</span>
+
+                            <span class="skill-number">
+                                02
+                            </span>
+
+                            <span class="skill-level">
+                                80%
+                            </span>
+
                         </div>
 
-                        <h3>Django</h3>
+
+                        <h3>
+                            Django
+                        </h3>
+
 
                         <p>
                             Pengembangan aplikasi web menggunakan
                             framework Django.
                         </p>
 
+
                         <div
                             class="skill-bar"
                             aria-label="Django proficiency 80 percent"
                         >
-                            <span class="skill-progress django"></span>
+
+                            <span
+                                class="skill-progress django"
+                            ></span>
+
                         </div>
 
                     </article>
 
 
+                    <!-- HTML -->
+
                     <article class="skill-card">
 
                         <div class="skill-header">
-                            <span class="skill-number">03</span>
-                            <span class="skill-level">90%</span>
+
+                            <span class="skill-number">
+                                03
+                            </span>
+
+                            <span class="skill-level">
+                                90%
+                            </span>
+
                         </div>
 
-                        <h3>HTML5</h3>
+
+                        <h3>
+                            HTML5
+                        </h3>
+
 
                         <p>
                             Membuat struktur halaman web menggunakan
                             semantic HTML.
                         </p>
 
+
                         <div
                             class="skill-bar"
                             aria-label="HTML5 proficiency 90 percent"
                         >
-                            <span class="skill-progress html"></span>
+
+                            <span
+                                class="skill-progress html"
+                            ></span>
+
                         </div>
 
                     </article>
 
 
+                    <!-- CSS -->
+
                     <article class="skill-card">
 
                         <div class="skill-header">
-                            <span class="skill-number">04</span>
-                            <span class="skill-level">85%</span>
+
+                            <span class="skill-number">
+                                04
+                            </span>
+
+                            <span class="skill-level">
+                                85%
+                            </span>
+
                         </div>
 
-                        <h3>CSS3</h3>
+
+                        <h3>
+                            CSS3
+                        </h3>
+
 
                         <p>
                             Membuat layout, responsive design,
                             dan interaction menggunakan CSS.
                         </p>
 
+
                         <div
                             class="skill-bar"
                             aria-label="CSS3 proficiency 85 percent"
                         >
-                            <span class="skill-progress css"></span>
+
+                            <span
+                                class="skill-progress css"
+                            ></span>
+
                         </div>
 
                     </article>
+
 
                 </div>
 
@@ -306,117 +547,155 @@
 
         <!-- ================= PROJECTS ================= -->
 
-        <section class="content-section" id="projects">
+        <section
+            class="content-section"
+            id="projects"
+        >
 
             <div class="container">
 
-                <div class="section-heading">
-                    <p class="section-label">03</p>
-                    <h2>Projects</h2>
+
+                <div class="projects-section-top">
+
+
+                    <div class="section-heading">
+
+                        <p class="section-label">
+                            03
+                        </p>
+
+                        <h2>
+                            Projects
+                        </h2>
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'main:show_projects' %}"
+                        class="view-all-projects"
+                    >
+                        View All Projects →
+                    </a>
+
+
                 </div>
 
 
                 <div class="projects-grid">
 
-                    <article class="project-card">
 
-                        <div class="project-top">
-                            <span>PROJECT 01</span>
-                            <span>2026</span>
-                        </div>
+                    {% for project in project_list %}
 
-                        <h3>
-                            Personal Portfolio
-                        </h3>
 
-                        <p class="project-description">
-                            Website portfolio pribadi yang dibangun menggunakan
-                            Django, HTML5, dan CSS3 dengan responsive layout,
-                            semantic HTML, serta interactive UI elements.
-                        </p>
+                        <article class="project-card">
 
-                        <div class="project-tags">
-                            <span>Django</span>
-                            <span>Python</span>
-                            <span>HTML5</span>
-                            <span>CSS3</span>
-                        </div>
 
-                        <div class="project-details">
+                            <div class="project-top">
 
-                            <div>
-                                <span>ROLE</span>
-                                <strong>Developer</strong>
+                                <span>
+                                    PROJECT {{ forloop.counter|stringformat:"02d" }}
+                                </span>
+
+                                <span>
+                                    {{ project.year }}
+                                </span>
+
                             </div>
 
-                            <div>
-                                <span>FOCUS</span>
-                                <strong>Web UI</strong>
+
+                            <h3>
+                                {{ project.title }}
+                            </h3>
+
+
+                            <p class="project-description">
+                                {{ project.description }}
+                            </p>
+
+
+                            <div class="project-tags">
+
+
+                                {% for technology in project.technology_list %}
+
+                                    <span>
+                                        {{ technology }}
+                                    </span>
+
+                                {% endfor %}
+
+
                             </div>
 
-                        </div>
 
-                        <a
-                            href="https://github.com/JeudiAugusto/myportofolio"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="project-link"
-                        >
-                            View Repository →
-                        </a>
-
-                    </article>
+                            <div class="project-details">
 
 
-                    <article class="project-card">
+                                <div>
 
-                        <div class="project-top">
-                            <span>PROJECT 02</span>
-                            <span>2025</span>
-                        </div>
+                                    <span>
+                                        ROLE
+                                    </span>
 
-                        <h3>
-                            Cashie
-                        </h3>
+                                    <strong>
+                                        {{ project.role }}
+                                    </strong>
 
-                        <p class="project-description">
-                            Aplikasi web pengelola keuangan yang dikembangkan
-                            menggunakan PHP dan JavaScript dengan fitur
-                            authentication, dashboard, CRUD, dan AJAX.
-                        </p>
+                                </div>
 
-                        <div class="project-tags">
-                            <span>PHP</span>
-                            <span>JavaScript</span>
-                            <span>SQL</span>
-                            <span>CRUD</span>
-                            <span>AJAX</span>
-                        </div>
 
-                        <div class="project-details">
+                                <div>
 
-                            <div>
-                                <span>ROLE</span>
-                                <strong>Team Project</strong>
+                                    <span>
+                                        FOCUS
+                                    </span>
+
+                                    <strong>
+                                        {{ project.focus }}
+                                    </strong>
+
+                                </div>
+
+
                             </div>
 
-                            <div>
-                                <span>FOCUS</span>
-                                <strong>Finance Web App</strong>
-                            </div>
+
+                            {% if project.repository_url %}
+
+                                <a
+                                    href="{{ project.repository_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="project-link"
+                                >
+                                    View Repository →
+                                </a>
+
+                            {% endif %}
+
+
+                        </article>
+
+
+                    {% empty %}
+
+
+                        <div class="homepage-project-empty">
+
+                            <h3>
+                                Projects coming soon.
+                            </h3>
+
+                            <p>
+                                Belum ada project yang ditambahkan.
+                            </p>
 
                         </div>
 
-                        <a
-                            href="https://github.com/fzdhl/cashie"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="project-link"
-                        >
-                            View Repository →
-                        </a>
 
-                    </article>
+                    {% endfor %}
+
 
                 </div>
 
@@ -427,13 +706,20 @@
 
         <!-- ================= CONTACT ================= -->
 
-        <section class="contact-section" id="contact">
+        <section
+            class="contact-section"
+            id="contact"
+        >
 
             <div class="container contact-inner">
 
+
                 <div>
 
-                    <p class="section-label">04</p>
+                    <p class="section-label">
+                        04
+                    </p>
+
 
                     <h2>
                         Let's build
@@ -445,10 +731,12 @@
 
                 <div class="contact-action">
 
+
                     <p>
                         Punya pertanyaan, ide, atau ingin berkolaborasi?
                         Silakan hubungi saya.
                     </p>
+
 
                     <a
                         href="mailto:jeudiaugustoasadullah@gmail.com"
@@ -457,11 +745,14 @@
                         Get in Touch →
                     </a>
 
+
                 </div>
+
 
             </div>
 
         </section>
+
 
     </main>
 
@@ -472,17 +763,21 @@
 
         <div class="container footer-inner">
 
+
             <p>
                 © 2026 {{ name }}
             </p>
+
 
             <p>
                 {{ study_program }} · Universitas Indonesia
             </p>
 
+
         </div>
 
     </footer>
+
 
 </body>
 </html>
