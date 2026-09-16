@@ -1,37 +1,8 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="id">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+{% block meta %}
     <title>Projects - {{ name }}</title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/style.css' %}?v=5"
-    >
 
     <style>
         /* =========================================================
@@ -231,6 +202,137 @@
             color: var(--text-muted);
 
             line-height: 1.8;
+        }
+
+                .projects-section-actions {
+            display: grid;
+
+            gap: 1.2rem;
+
+            justify-items: start;
+        }
+
+        .projects-controls {
+            width: 100%;
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.8rem;
+        }
+
+        .project-add-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 0.5rem;
+
+            min-height: 46px;
+
+            padding: 0.8rem 1.2rem;
+
+            color: var(--paper);
+
+            background-color: var(--ink);
+
+            border: 1px solid var(--ink);
+            border-radius: var(--radius);
+
+            font-size: 0.78rem;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            transition:
+                background-color 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .project-add-button:hover {
+            background-color: var(--accent);
+
+            border-color: var(--accent);
+
+            transform: translateY(-2px);
+        }
+
+        .project-search {
+            width: 100%;
+
+            display: flex;
+
+            gap: 0.7rem;
+        }
+
+        .project-search input {
+            flex: 1;
+
+            min-width: 0;
+
+            padding: 0.8rem 1rem;
+
+            color: var(--ink);
+
+            background-color: var(--paper);
+
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+
+            font: inherit;
+
+            outline: none;
+        }
+
+        .project-search input:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(217, 93, 57, 0.12);
+        }
+
+        .project-search-button {
+            min-height: 46px;
+
+            padding: 0.8rem 1.2rem;
+
+            color: var(--ink);
+
+            background-color: transparent;
+
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .project-search-button:hover {
+            border-color: var(--ink);
+        }
+
+        .project-search-clear {
+            display: inline-flex;
+
+            align-items: center;
+
+            color: var(--text-muted);
+
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+        .project-search-clear:hover {
+            color: var(--accent);
         }
 
 
@@ -462,6 +564,252 @@
                 );
         }
 
+                /* ================= DELETE PROJECT ================= */
+
+        .project-delete-wrapper {
+            margin-top: 1rem;
+        }
+
+        .project-delete-button {
+            width: 100%;
+
+            padding: 0.8rem 1rem;
+
+            color: #f0a58e;
+
+            background-color: transparent;
+
+            border: 1px solid #6f3f35;
+            border-radius: var(--radius);
+
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                background-color 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .project-delete-button:hover {
+            color: #ffffff;
+
+            background-color: #b6402d;
+            border-color: #b6402d;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* ================= DELETE MODAL ================= */
+
+        .project-delete-modal {
+            width: 100vw;
+            height: 100vh;
+
+            max-width: none;
+            max-height: none;
+
+            margin: 0;
+            padding: 0;
+
+            border: 0;
+
+            background: transparent;
+
+            overflow: visible;
+        }
+
+        .project-delete-modal:popover-open {
+            display: grid;
+
+            place-items: center;
+        }
+
+        .project-delete-modal::backdrop {
+            background:
+                rgba(
+                    20,
+                    18,
+                    16,
+                    0.62
+                );
+
+            backdrop-filter: blur(4px);
+        }
+
+        .project-delete-modal__backdrop {
+            position: fixed;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            padding: 0;
+
+            background: transparent;
+
+            border: 0;
+
+            cursor: default;
+        }
+
+        .project-delete-modal__content {
+            position: relative;
+            z-index: 1;
+
+            width:
+                min(
+                    calc(100% - 2rem),
+                    520px
+                );
+
+            padding: 2.2rem;
+
+            background-color: var(--paper);
+
+            color: var(--ink);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+
+            box-shadow:
+                0 24px 70px
+                rgba(0, 0, 0, 0.25);
+        }
+
+        .project-delete-modal__close {
+            position: absolute;
+
+            top: 1rem;
+            right: 1rem;
+
+            width: 36px;
+            height: 36px;
+
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: var(--ink);
+
+            background-color: transparent;
+
+            border: 1px solid var(--line);
+            border-radius: 50%;
+
+            font-family: inherit;
+            font-size: 1.2rem;
+
+            cursor: pointer;
+        }
+
+        .project-delete-modal__eyebrow {
+            margin-bottom: 0.8rem;
+
+            color: #b6402d;
+
+            font-size: 0.7rem;
+            font-weight: 700;
+
+            letter-spacing: 0.12em;
+        }
+
+        .project-delete-modal__content h2 {
+            max-width: 390px;
+
+            margin-bottom: 1rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    2rem,
+                    5vw,
+                    3rem
+                );
+
+            line-height: 1;
+
+            letter-spacing: -0.05em;
+        }
+
+        .project-delete-modal__description {
+            color: var(--text-muted);
+
+            line-height: 1.7;
+        }
+
+        .project-delete-modal__description strong {
+            color: var(--ink);
+        }
+
+        .project-delete-modal__actions {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 0.7rem;
+
+            margin-top: 2rem;
+
+            padding-top: 1.5rem;
+
+            border-top: 1px solid var(--line);
+        }
+
+        .project-delete-modal__actions form {
+            margin: 0;
+        }
+
+        .project-delete-cancel,
+        .project-delete-confirm {
+            min-height: 44px;
+
+            padding:
+                0.75rem
+                1.1rem;
+
+            border-radius: var(--radius);
+
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .project-delete-cancel {
+            color: var(--ink);
+
+            background-color: transparent;
+
+            border: 1px solid var(--line);
+        }
+
+        .project-delete-confirm {
+            color: #ffffff;
+
+            background-color: #b6402d;
+
+            border: 1px solid #b6402d;
+        }
+
+        .project-delete-confirm:hover {
+            background-color: #8f3022;
+
+            border-color: #8f3022;
+        }
+
 
         /* ================= EMPTY STATE ================= */
 
@@ -567,7 +915,7 @@
 
         /* ================= ACTIVE NAV ================= */
 
-        .nav-menu .nav-active::after {
+        .nav-menu a[href="{% url 'main:show_projects' %}"]::after {
             width: 100%;
         }
 
@@ -640,76 +988,10 @@
             }
         }
     </style>
-</head>
+{% endblock meta %}
 
 
-<body>
-
-    <!-- ================= HEADER ================= -->
-
-    <header class="site-header">
-
-        <div class="container navbar">
-
-            <a
-                href="{% url 'main:show_main' %}"
-                class="brand"
-            >
-                JA<span>.</span>
-            </a>
-
-
-            <nav
-                class="nav-menu"
-                aria-label="Main navigation"
-            >
-
-                <a
-                    href="{% url 'main:show_main' %}#profile"
-                >
-                    Profile
-                </a>
-
-                <a
-                    href="{% url 'main:show_main' %}#about"
-                >
-                    About
-                </a>
-
-                <a
-                    href="{% url 'main:show_main' %}#skills"
-                >
-                    Skills
-                </a>
-
-                <a
-                    href="{% url 'main:show_projects' %}"
-                    class="nav-active"
-                >
-                    Projects
-                </a>
-
-                <a
-                    href="{% url 'main:show_experience' %}"
-                >
-                    Experience
-                </a>
-
-                <a
-                    href="{% url 'main:show_main' %}#contact"
-                >
-                    Contact
-                </a>
-
-            </nav>
-
-        </div>
-
-    </header>
-
-
-    <!-- ================= PAGE ================= -->
-
+{% block content %}
     <main class="projects-page">
 
 
@@ -823,11 +1105,66 @@
                     </div>
 
 
-                    <p class="projects-section-description">
-                        Beberapa project yang menjadi bagian dari
-                        perjalanan saya dalam mempelajari pengembangan
-                        aplikasi dan membangun solusi digital.
-                    </p>
+                                        <div class="projects-section-actions">
+
+                        <p class="projects-section-description">
+                            Beberapa project yang menjadi bagian dari
+                            perjalanan saya dalam mempelajari pengembangan
+                            aplikasi dan membangun solusi digital.
+                        </p>
+
+
+                        <div class="projects-controls">
+
+                            <a
+                                href="{% url 'main:create_project' %}"
+                                class="project-add-button"
+                            >
+                                <span aria-hidden="true">
+                                    +
+                                </span>
+
+                                Add Project
+                            </a>
+
+                        </div>
+
+
+                        <form
+                            method="GET"
+                            action="{% url 'main:show_projects' %}"
+                            class="project-search"
+                        >
+
+                            <input
+                                type="search"
+                                name="title"
+                                value="{{ title_query }}"
+                                placeholder="Search project by title..."
+                                aria-label="Search project by title"
+                            >
+
+                            <button
+                                type="submit"
+                                class="project-search-button"
+                            >
+                                Search
+                            </button>
+
+                            {% if title_query %}
+
+                                <a
+                                    href="{% url 'main:show_projects' %}"
+                                    class="project-search-clear"
+                                >
+                                    Clear
+                                </a>
+
+                            {% endif %}
+
+                        </form>
+
+                    </div>
 
                 </div>
 
@@ -927,6 +1264,8 @@
 
                             {% endif %}
 
+                            {% include 'components/project_delete_modal.html' %}
+
 
                         </article>
 
@@ -987,25 +1326,4 @@
         </section>
 
     </main>
-
-
-    <!-- ================= FOOTER ================= -->
-
-    <footer class="site-footer">
-
-        <div class="container footer-inner">
-
-            <p>
-                © 2026 {{ name }}
-            </p>
-
-            <p>
-                Projects · Personal Portfolio
-            </p>
-
-        </div>
-
-    </footer>
-
-</body>
-</html>
+{% endblock content %}

@@ -1727,3 +1727,39 @@ section {
     }
 
 }
+
+/* =========================================================
+   DJANGO MESSAGES
+   ========================================================= */
+
+.site-messages {
+    position: relative;
+
+    z-index: 20;
+
+    padding-top: 1rem;
+}
+
+.site-message {
+    padding: 1rem 1.2rem;
+
+    color: var(--ink);
+
+    background-color: var(--card);
+
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    line-height: 1.5;
+}
+
+.site-message--success {
+    color: #27603c;
+
+    background-color: #eaf5ed;
+
+    border-color: #b9d9c1;
+}

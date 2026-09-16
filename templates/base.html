@@ -1,0 +1,142 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+    {% block meta %}
+    {% endblock meta %}
+</head>
+
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="site-header">
+
+        <div class="container navbar">
+
+            <a
+                href="{% url 'main:show_main' %}"
+                class="brand"
+            >
+                JA<span>.</span>
+            </a>
+
+
+            <nav
+                class="nav-menu"
+                aria-label="Main navigation"
+            >
+
+                <a href="{% url 'main:show_main' %}">
+                    Profile
+                </a>
+
+                <a href="{% url 'main:show_main' %}#about">
+                    About
+                </a>
+
+                <a href="{% url 'main:show_main' %}#skills">
+                    Skills
+                </a>
+
+                <a href="{% url 'main:show_projects' %}">
+                    Projects
+                </a>
+
+                <a href="{% url 'main:show_experience' %}">
+                    Experience
+                </a>
+
+                <a href="{% url 'main:show_main' %}#contact">
+                    Contact
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+    <!-- ================= MESSAGES ================= -->
+
+    {% if messages %}
+
+        <div class="site-messages">
+
+            <div class="container">
+
+                {% for message in messages %}
+
+                    <div
+                        class="site-message site-message--{{ message.tags|default:'info' }}"
+                        role="status"
+                    >
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% endif %}    
+    
+    <!-- ================= PAGE CONTENT ================= -->
+
+    {% block content %}
+    {% endblock content %}
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-inner">
+
+            <p>
+                © 2026 Jeudi Augusto Asadullah
+            </p>
+
+            <p>
+                Sistem Informasi · Universitas Indonesia
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+
+</html>

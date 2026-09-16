@@ -1,0 +1,448 @@
+{% extends 'base.html' %}
+
+
+{% block meta %}
+    <title>Add Project - {{ name }}</title>
+
+    <style>
+        /* =========================================================
+           CREATE PROJECT PAGE
+           ========================================================= */
+
+        .form-page {
+            min-height: calc(100vh - 160px);
+
+            padding: 7rem 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(217, 93, 57, 0.04),
+                    transparent 35%
+                );
+        }
+
+        .form-layout {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 0.7fr)
+                minmax(0, 1.3fr);
+
+            gap: 6rem;
+
+            align-items: start;
+        }
+
+
+        /* ================= INTRO ================= */
+
+        .form-eyebrow {
+            margin-bottom: 1rem;
+
+            color: var(--accent);
+
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            letter-spacing: 0.14em;
+
+            text-transform: uppercase;
+        }
+
+        .form-intro h1 {
+            max-width: 560px;
+
+            margin-bottom: 1.8rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    3.2rem,
+                    6vw,
+                    5.8rem
+                );
+
+            line-height: 0.93;
+
+            letter-spacing: -0.06em;
+        }
+
+        .form-description {
+            max-width: 500px;
+
+            color: var(--text-muted);
+
+            font-size: 1rem;
+
+            line-height: 1.8;
+        }
+
+        .form-note {
+            margin-top: 2rem;
+
+            padding-top: 1.5rem;
+
+            border-top: 1px solid var(--line);
+
+            color: var(--text-muted);
+
+            font-size: 0.82rem;
+
+            line-height: 1.7;
+        }
+
+
+        /* ================= FORM CARD ================= */
+
+        .project-form-card {
+            padding: 2.5rem;
+
+            background-color: var(--card);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+        }
+
+        .project-form {
+            display: grid;
+
+            gap: 1.5rem;
+        }
+
+
+        /* ================= FIELD ================= */
+
+        .form-field {
+            display: grid;
+
+            gap: 0.55rem;
+        }
+
+        .form-field label {
+            font-size: 0.78rem;
+            font-weight: 700;
+
+            letter-spacing: 0.04em;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            width: 100%;
+
+            padding: 0.9rem 1rem;
+
+            background-color: var(--paper);
+
+            color: var(--ink);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+
+            font: inherit;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .form-field textarea {
+            resize: vertical;
+
+            min-height: 130px;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(217, 93, 57, 0.12);
+        }
+
+        .form-field input::placeholder,
+        .form-field textarea::placeholder {
+            color: #9c958d;
+        }
+
+
+        /* ================= HELP / ERROR ================= */
+
+        .form-help {
+            color: var(--text-muted);
+
+            font-size: 0.72rem;
+
+            line-height: 1.5;
+        }
+
+        .form-error {
+            margin: 0;
+
+            color: #b6402d;
+
+            font-size: 0.74rem;
+            font-weight: 700;
+
+            list-style: none;
+        }
+
+        .form-error li + li {
+            margin-top: 0.3rem;
+        }
+
+        .form-non-field-errors {
+            padding: 1rem;
+
+            border: 1px solid #d97866;
+
+            border-radius: var(--radius);
+
+            background-color:
+                rgba(217, 93, 57, 0.08);
+        }
+
+
+        /* ================= ACTIONS ================= */
+
+        .form-actions {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.8rem;
+
+            margin-top: 0.5rem;
+
+            padding-top: 1.5rem;
+
+            border-top: 1px solid var(--line);
+        }
+
+        .form-submit,
+        .form-cancel {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 46px;
+
+            padding:
+                0.85rem
+                1.3rem;
+
+            border-radius: var(--radius);
+
+            font-family: inherit;
+
+            font-size: 0.82rem;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            transition:
+                transform 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        .form-submit {
+            color: var(--paper);
+
+            background-color: var(--ink);
+
+            border: 1px solid var(--ink);
+        }
+
+        .form-submit:hover {
+            background-color: var(--accent);
+
+            border-color: var(--accent);
+
+            transform: translateY(-2px);
+        }
+
+        .form-cancel {
+            color: var(--ink);
+
+            background-color: transparent;
+
+            border: 1px solid var(--line);
+        }
+
+        .form-cancel:hover {
+            border-color: var(--ink);
+
+            transform: translateY(-2px);
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+            .form-layout {
+                grid-template-columns: 1fr;
+
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-page {
+                padding: 4.5rem 0;
+            }
+
+            .project-form-card {
+                padding: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-submit,
+            .form-cancel {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock meta %}
+
+
+{% block content %}
+    <main class="form-page">
+
+        <div class="container form-layout">
+
+
+            <!-- ================= INTRO ================= -->
+
+            <section class="form-intro">
+
+                <p class="form-eyebrow">
+                    PROJECT MANAGEMENT
+                </p>
+
+                <h1>
+                    Add a new
+                    project.
+                </h1>
+
+                <p class="form-description">
+                    Tambahkan project baru ke portfolio.
+                    Data yang dimasukkan melalui form ini akan
+                    disimpan ke database dan langsung ditampilkan
+                    pada halaman Projects.
+                </p>
+
+                <p class="form-note">
+                    Isi informasi project secara lengkap.
+                    URL repository bersifat opsional apabila
+                    project belum memiliki repository publik.
+                </p>
+
+            </section>
+
+
+            <!-- ================= FORM ================= -->
+
+            <section class="project-form-card">
+
+                <form
+                    method="POST"
+                    class="project-form"
+                >
+
+                    {% csrf_token %}
+
+
+                    {% if form.non_field_errors %}
+
+                        <div class="form-non-field-errors">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% for field in form %}
+
+                        <div class="form-field">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+
+                            {{ field }}
+
+
+                            {% if field.help_text %}
+
+                                <p class="form-help">
+                                    {{ field.help_text }}
+                                </p>
+
+                            {% endif %}
+
+
+                            {% if field.errors %}
+
+                                <ul class="form-error">
+
+                                    {% for error in field.errors %}
+
+                                        <li>
+                                            {{ error }}
+                                        </li>
+
+                                    {% endfor %}
+
+                                </ul>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="form-submit"
+                        >
+                            Add Project →
+                        </button>
+
+                        <a
+                            href="{% url 'main:show_projects' %}"
+                            class="form-cancel"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+        </div>
+
+    </main>
+{% endblock content %}

@@ -1,37 +1,9 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="id">
 
-<head>
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+{% block meta %}
     <title>Experience - {{ name }}</title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{% static 'css/style.css' %}?v=4"
-    >
 
     <style>
         /* =========================================================
@@ -52,7 +24,6 @@
 
         .exp-hero {
             padding: 7rem 0 6rem;
-
             border-bottom: 1px solid var(--line);
         }
 
@@ -64,7 +35,6 @@
                 minmax(280px, 0.6fr);
 
             gap: 6rem;
-
             align-items: end;
         }
 
@@ -95,7 +65,6 @@
                 );
 
             line-height: 0.92;
-
             letter-spacing: -0.065em;
         }
 
@@ -107,13 +76,11 @@
             color: var(--text-muted);
 
             font-size: 1.08rem;
-
             line-height: 1.8;
         }
 
         .exp-actions {
             display: flex;
-
             flex-wrap: wrap;
 
             gap: 0.8rem;
@@ -148,13 +115,11 @@
 
         .exp-primary-button {
             color: var(--paper);
-
             background-color: var(--ink);
         }
 
         .exp-primary-button:hover {
             background-color: var(--accent);
-
             transform: translateY(-3px);
         }
 
@@ -168,7 +133,6 @@
 
         .exp-secondary-button:hover {
             border-color: var(--ink);
-
             transform: translateY(-3px);
         }
 
@@ -249,7 +213,6 @@
 
         .exp-tags {
             display: flex;
-
             flex-wrap: wrap;
 
             gap: 0.4rem;
@@ -669,7 +632,7 @@
 
         /* ================= ACTIVE NAV ================= */
 
-        .nav-menu .nav-active::after {
+        .nav-menu a[href="{% url 'main:show_experience' %}"]::after {
             width: 100%;
         }
 
@@ -779,76 +742,10 @@
             }
         }
     </style>
-</head>
+{% endblock meta %}
 
 
-<body>
-
-    <!-- ================= HEADER ================= -->
-
-    <header class="site-header">
-
-        <div class="container navbar">
-
-            <a
-                href="{% url 'main:show_main' %}"
-                class="brand"
-            >
-                JA<span>.</span>
-            </a>
-
-
-            <nav
-                class="nav-menu"
-                aria-label="Main navigation"
-            >
-
-                <a
-                    href="{% url 'main:show_main' %}#profile"
-                >
-                    Profile
-                </a>
-
-                <a
-                    href="{% url 'main:show_main' %}#about"
-                >
-                    About
-                </a>
-
-                <a
-                    href="{% url 'main:show_main' %}#skills"
-                >
-                    Skills
-                </a>
-
-                <a
-                    href="{% url 'main:show_main' %}#projects"
-                >
-                    Projects
-                </a>
-
-                <a
-                    href="{% url 'main:show_experience' %}"
-                    class="nav-active"
-                >
-                    Experience
-                </a>
-
-                <a
-                    href="{% url 'main:show_main' %}#contact"
-                >
-                    Contact
-                </a>
-
-            </nav>
-
-        </div>
-
-    </header>
-
-
-    <!-- ================= PAGE ================= -->
-
+{% block content %}
     <main class="exp-page">
 
 
@@ -1204,25 +1101,4 @@
         </section>
 
     </main>
-
-
-    <!-- ================= FOOTER ================= -->
-
-    <footer class="site-footer">
-
-        <div class="container footer-inner">
-
-            <p>
-                © 2026 {{ name }}
-            </p>
-
-            <p>
-                Experience · Personal Portfolio
-            </p>
-
-        </div>
-
-    </footer>
-
-</body>
-</html>
+{% endblock content %}

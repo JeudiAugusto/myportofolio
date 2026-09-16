@@ -42,6 +42,10 @@ ALLOWED_HOSTS = [
     "jeudi-augusto-jeudiaugustoasadullah.pws.cs.ui.ac.id",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://jeudi-augusto-jeudiaugustoasadullah.pws.cs.ui.ac.id",
+]
+
 
 # Konfigurasi HTTPS hanya digunakan saat production.
 if PRODUCTION:
