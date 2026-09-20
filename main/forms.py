@@ -1,12 +1,13 @@
 from django.forms import (
     ModelForm,
     NumberInput,
+    Select,
     Textarea,
     TextInput,
     URLInput,
 )
 
-from main.models import Project
+from main.models import Experience, Project
 
 
 class ProjectForm(ModelForm):
@@ -79,6 +80,53 @@ class ProjectForm(ModelForm):
                     "placeholder": (
                         "https://github.com/username/project"
                     ),
+                }
+            ),
+        }
+
+
+class ExperienceForm(ModelForm):
+    class Meta:
+        model = Experience
+
+        fields = [
+            "title",
+            "description",
+            "category",
+            "thumbnail",
+        ]
+
+        labels = {
+            "title": "Nama Experience",
+            "description": "Deskripsi Experience",
+            "category": "Kategori",
+            "thumbnail": "Path Thumbnail",
+        }
+
+        widgets = {
+            "title": TextInput(
+                attrs={
+                    "placeholder": (
+                        "Contoh: Staff Kajian dan Aksi Strategis"
+                    ),
+                    "maxlength": 255,
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    "placeholder": (
+                        "Jelaskan pengalaman dan tanggung jawab..."
+                    ),
+                    "rows": 5,
+                }
+            ),
+            "category": Select(),
+            "thumbnail": TextInput(
+                attrs={
+                    "placeholder": (
+                        "Contoh: img/experience/kegiatan.jpg"
+                    ),
+                    "maxlength": 255,
                 }
             ),
         }

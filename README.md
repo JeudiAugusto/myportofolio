@@ -474,3 +474,48 @@ PBP C - Gasal 2026/2027
    Pada tahap tersebut perubahan belum diterapkan ke database. Setelah itu saya menjalankan `python manage.py migrate`. Migration `0004_project` kemudian diterapkan sehingga struktur tabel untuk Project dibuat pada database.
 
    Jadi yang saya pahami, `makemigrations` membuat catatan atau instruksi perubahan schema berdasarkan model Django, sedangkan `migrate` menerapkan instruksi tersebut ke database.
+
+
+### Tugas 3
+
+1. **Mengapa menggunakan `ModelForm` dibandingkan membuat form HTML secara manual? Mengapa perlu `{% csrf_token %}`?**
+
+   Saya menggunakan `ModelForm` karena form dapat dibuat langsung berdasarkan model Django yang sudah ada. Dengan begitu, saya tidak perlu mendefinisikan ulang setiap field dan validasinya secara manual di HTML. Pada tugas ini, saya membuat `ExperienceForm` berdasarkan model `Experience`, sehingga field seperti `title`, `description`, `category`, dan `thumbnail` dapat langsung digunakan untuk proses create maupun update. Penggunaan `ModelForm` juga membuat kode lebih konsisten karena validasi form mengikuti aturan yang sudah didefinisikan pada model.
+
+   `{% csrf_token %}` digunakan untuk melindungi form yang mengirim request `POST` dari serangan Cross-Site Request Forgery (CSRF). Token tersebut memastikan bahwa request yang diterima server berasal dari form pada aplikasi Django yang sah. Pada fitur create, update, dan delete Experience, token CSRF disertakan agar Django dapat memverifikasi request sebelum data di database diubah.
+
+2. **Mengapa JSON lebih disukai dalam pengembangan aplikasi web modern dibandingkan XML?**
+
+   JSON lebih sering digunakan karena struktur datanya lebih ringkas dan mudah dibaca. Penulisannya tidak membutuhkan tag pembuka dan penutup seperti XML sehingga ukuran data yang dikirim juga cenderung lebih kecil. JSON juga sangat mudah digunakan bersama JavaScript karena format object dan array pada JSON mirip dengan struktur data yang digunakan di JavaScript. Hal ini membuat proses pertukaran data antara backend dan frontend menjadi lebih sederhana.
+
+   XML tetap memiliki kegunaan tertentu, tetapi untuk kebutuhan web modern seperti REST API dan komunikasi client-server, JSON biasanya lebih praktis karena parsing-nya sederhana dan formatnya tidak terlalu verbose.
+
+3. **Bagaimana alur view ketika mengembalikan data portofolio dalam format JSON? Mengapa model Django perlu diserialisasi?**
+
+   Pada tugas ini, fungsi `get_experiences_json` mengambil data dari model `Experience` menggunakan Django ORM. Hasil query tersebut masih berupa QuerySet yang berisi object model Django. Object tersebut belum dapat langsung dikirim sebagai response JSON karena JSON hanya dapat merepresentasikan tipe data tertentu seperti string, angka, boolean, array, object, dan null.
+
+   Karena itu, saya menggunakan `serializers.serialize("json", experiences)` untuk mengubah QuerySet menjadi representasi JSON. Hasil serialization kemudian dikembalikan melalui `HttpResponse` dengan `content_type="application/json"`.
+
+   Untuk menampilkan Experience pada halaman web, fungsi `show_experience` mengambil response JSON tersebut lalu melakukan `serializers.deserialize()`. Hasil deserialization diubah kembali menjadi object `Experience` sehingga atribut dan method model, seperti `get_category_display` dan `is_ongoing`, tetap dapat digunakan oleh template `experience.html`.
+
+#### Progress Tugas 3
+
+Pada Tugas 3 saya memilih bagian **Experience** sebagai objek penerapan Form & Data Delivery. Fitur yang saya implementasikan meliputi:
+
+- Create Experience menggunakan `ExperienceForm`.
+- Update Experience berdasarkan UUID.
+- Delete Experience menggunakan request `POST`.
+- Endpoint JSON pada `/api/experiences/`.
+- Serialization dan deserialization data Experience.
+- Halaman create dan update yang menggunakan template inheritance.
+- Tombol Add, Update, dan Delete pada halaman Experience.
+- Success message setelah proses create, update, dan delete.
+- Automated testing untuk fitur Experience dan fitur Tutorial 03 yang sudah ada.
+
+#### AI Disclosure
+
+Dalam pengerjaan Tugas 3, saya menggunakan **ChatGPT** sebagai alat bantu untuk berdiskusi mengenai implementasi Django, menyusun langkah pengembangan secara bertahap, melakukan review struktur kode, dan membantu menyusun skenario automated testing. Prompt yang saya gunakan umumnya meminta penjelasan langkah demi langkah berdasarkan struktur project yang sudah saya buat, kemudian setiap perubahan saya jalankan dan uji sendiri pada environment lokal.
+
+Bagian yang dibantu AI terutama meliputi struktur `ModelForm`, pola view create/update/delete, serialization dan deserialization JSON, penataan UI form, serta penyusunan test case. Saya tidak langsung menganggap setiap output AI benar. Setiap perubahan diperiksa menggunakan `python manage.py check`, diuji melalui browser, dicek langsung pada database melalui Django shell, dan akhirnya diuji menggunakan `python manage.py test`.
+
+Salah satu keterbatasan AI yang saya temukan adalah AI dapat memberikan asumsi mengenai requirement atau struktur project apabila konteks yang diberikan belum lengkap. Karena itu, saya melakukan cross-check terhadap instruksi resmi PBP dan menyesuaikan kode dengan model serta template yang sudah ada. Contohnya, field yang berhubungan dengan timestamp tidak saya masukkan ke dalam `ExperienceForm` karena field tersebut tidak termasuk data yang perlu diisi melalui form. Saya juga melakukan pengujian manual terhadap alur Create → Update → Delete untuk memastikan jumlah object di database berubah sesuai yang diharapkan.

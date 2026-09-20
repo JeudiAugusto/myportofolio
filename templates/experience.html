@@ -549,6 +549,88 @@
             font-size: 0.83rem;
         }
 
+                /* ================= EXPERIENCE ACTIONS ================= */
+
+        .exp-card-actions {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 0.7rem;
+
+            margin-top: 1.8rem;
+
+            padding-top: 1.5rem;
+
+            border-top: 1px solid var(--line);
+        }
+
+        .exp-update-button,
+        .exp-delete-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 42px;
+
+            padding: 0.7rem 1rem;
+
+            border-radius: var(--radius);
+
+            font-family: inherit;
+
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                background-color 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .exp-update-button {
+            color: var(--paper);
+
+            background-color: var(--ink);
+
+            border: 1px solid var(--ink);
+        }
+
+        .exp-update-button:hover {
+            background-color: var(--accent);
+
+            border-color: var(--accent);
+
+            transform: translateY(-2px);
+        }
+
+        .exp-delete-form {
+            margin: 0;
+        }
+
+        .exp-delete-button {
+            color: #b6402d;
+
+            background-color: transparent;
+
+            border: 1px solid #d9a89d;
+        }
+
+        .exp-delete-button:hover {
+            color: #ffffff;
+
+            background-color: #b6402d;
+
+            border-color: #b6402d;
+
+            transform: translateY(-2px);
+        }
+
 
         /* ================= EMPTY STATE ================= */
 
@@ -778,8 +860,15 @@
                     <div class="exp-actions">
 
                         <a
-                            href="mailto:jeudiaugustoasadullah@gmail.com"
+                            href="{% url 'main:create_experience' %}"
                             class="exp-primary-button"
+                        >
+                            + Add Experience
+                        </a>
+
+                        <a
+                            href="mailto:jeudiaugustoasadullah@gmail.com"
+                            class="exp-secondary-button"
                         >
                             Let's Connect
                         </a>
@@ -1037,6 +1126,37 @@
 
                                     </div>
 
+
+                                </div>
+
+
+                                <div class="exp-card-actions">
+
+                                    <a
+                                        href="{% url 'main:update_experience' experience.id %}"
+                                        class="exp-update-button"
+                                    >
+                                        Update Experience
+                                    </a>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'main:delete_experience' experience.id %}"
+                                        class="exp-delete-form"
+                                        onsubmit="return confirm('Yakin ingin menghapus experience ini?');"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="exp-delete-button"
+                                        >
+                                            Delete Experience
+                                        </button>
+
+                                    </form>
 
                                 </div>
 
