@@ -7,7 +7,7 @@ from django.shortcuts import (
     render,
 )
 
-from main.forms import ProjectForm
+from main.forms import ExperienceForm, ProjectForm
 from main.models import Experience, Project
 
 
@@ -34,10 +34,42 @@ def show_main(request):
     )
 
 
+# =========================================================
+# EXPERIENCE
+# =========================================================
+
+def get_experiences_json(request):
+    experiences = Experience.objects.all().order_by(
+        "-started_at"
+    )
+
+    experiences_json = serializers.serialize(
+        "json",
+        experiences,
+    )
+
+    return HttpResponse(
+        experiences_json,
+        content_type="application/json",
+    )
+
+
 def show_experience(request):
+    json_response = get_experiences_json(request)
+
+    experiences = serializers.deserialize(
+        "json",
+        json_response.content.decode("utf-8"),
+    )
+
+    experiences = [
+        experience.object
+        for experience in experiences
+    ]
+
     context = {
         "name": "Jeudi Augusto Asadullah",
-        "experience_list": Experience.objects.all(),
+        "experience_list": experiences,
     }
 
     return render(
@@ -46,6 +78,98 @@ def show_experience(request):
         context,
     )
 
+
+def create_experience(request):
+    form = ExperienceForm(
+        request.POST or None
+    )
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+
+        messages.success(
+            request,
+            "Experience berhasil ditambahkan!",
+        )
+
+        return redirect(
+            "main:show_experience"
+        )
+
+    context = {
+        "name": "Jeudi Augusto Asadullah",
+        "form": form,
+    }
+
+    return render(
+        request,
+        "create_experience.html",
+        context,
+    )
+
+
+def update_experience(request, experience_id):
+    experience = get_object_or_404(
+        Experience,
+        pk=experience_id,
+    )
+
+    form = ExperienceForm(
+        request.POST or None,
+        instance=experience,
+    )
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+
+        messages.success(
+            request,
+            "Experience berhasil diperbarui!",
+        )
+
+        return redirect(
+            "main:show_experience"
+        )
+
+    context = {
+        "name": "Jeudi Augusto Asadullah",
+        "form": form,
+        "experience": experience,
+    }
+
+    return render(
+        request,
+        "update_experience.html",
+        context,
+    )
+
+
+def delete_experience(request, experience_id):
+    experience = get_object_or_404(
+        Experience,
+        pk=experience_id,
+    )
+
+    if request.method == "POST":
+        experience.delete()
+
+        messages.success(
+            request,
+            "Experience berhasil dihapus!",
+        )
+
+        return redirect(
+            "main:show_experience"
+        )
+
+    return redirect(
+        "main:show_experience"
+    )
+
+
+# =========================================================
+# PROJECT
+# =========================================================
 
 def get_projects_json(request):
     title_query = request.GET.get(
