@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -56,6 +57,13 @@ class Experience(models.Model):
 
 
 class Project(models.Model):
+
+    starred_by = models.ManyToManyField(
+        User,
+        related_name="starred_projects",
+        blank=True,
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,

@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+
+{% block meta %}
+    <title>Login - {{ name }}</title>
+
+    <style>
+        .auth-page {
+            min-height: calc(100vh - 160px);
+
+            display: flex;
+            align-items: center;
+
+            padding: 6rem 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(217, 93, 57, 0.04),
+                    transparent 40%
+                );
+        }
+
+        .auth-layout {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 0.8fr)
+                minmax(0, 1.2fr);
+
+            gap: 5rem;
+
+            align-items: start;
+        }
+
+        .auth-eyebrow {
+            margin-bottom: 1rem;
+
+            color: var(--accent);
+
+            font-size: 0.75rem;
+            font-weight: 700;
+
+            letter-spacing: 0.14em;
+
+            text-transform: uppercase;
+        }
+
+        .auth-intro h1 {
+            max-width: 600px;
+
+            margin-bottom: 1.5rem;
+
+            font-family:
+                "Space Grotesk",
+                sans-serif;
+
+            font-size:
+                clamp(
+                    3.2rem,
+                    6vw,
+                    5.5rem
+                );
+
+            line-height: 0.95;
+
+            letter-spacing: -0.06em;
+        }
+
+        .auth-description {
+            max-width: 500px;
+
+            color: var(--text-muted);
+
+            line-height: 1.8;
+        }
+
+        .auth-card {
+            padding: 2.5rem;
+
+            background-color: var(--card);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+        }
+
+        .auth-form {
+            display: grid;
+
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: grid;
+
+            gap: 0.55rem;
+        }
+
+        .form-group label {
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .form-group input {
+            width: 100%;
+
+            padding: 0.9rem 1rem;
+
+            background-color: var(--paper);
+
+            color: var(--ink);
+
+            border: 1px solid var(--line);
+
+            border-radius: var(--radius);
+
+            font: inherit;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(217, 93, 57, 0.12);
+        }
+
+        .form-error {
+            margin: 0;
+
+            color: #b6402d;
+
+            font-size: 0.74rem;
+            font-weight: 700;
+
+            line-height: 1.5;
+        }
+
+        .auth-submit {
+            min-height: 46px;
+
+            margin-top: 0.5rem;
+
+            padding: 0.85rem 1.3rem;
+
+            color: var(--paper);
+
+            background-color: var(--ink);
+
+            border: 1px solid var(--ink);
+
+            border-radius: var(--radius);
+
+            font: inherit;
+
+            font-size: 0.82rem;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                background-color 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .auth-submit:hover {
+            background-color: var(--accent);
+
+            border-color: var(--accent);
+
+            transform: translateY(-2px);
+        }
+
+        .auth-switch {
+            margin-top: 1.5rem;
+
+            color: var(--text-muted);
+
+            font-size: 0.82rem;
+
+            line-height: 1.6;
+        }
+
+        .auth-switch a {
+            color: var(--ink);
+
+            font-weight: 700;
+        }
+
+        .auth-switch a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 900px) {
+            .auth-layout {
+                grid-template-columns: 1fr;
+
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .auth-page {
+                padding: 4rem 0;
+            }
+
+            .auth-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+{% endblock meta %}
+
+
+{% block content %}
+    <main class="auth-page">
+
+        <div class="container auth-layout">
+
+            <section class="auth-intro">
+
+                <p class="auth-eyebrow">
+                    ACCOUNT
+                </p>
+
+                <h1>
+                    Welcome
+                    back.
+                </h1>
+
+                <p class="auth-description">
+                    Login menggunakan akun yang sudah terdaftar
+                    untuk melanjutkan ke website portfolio.
+                </p>
+
+            </section>
+
+
+            <section class="auth-card">
+
+                <form
+                    method="POST"
+                    action="{% url 'main:login' %}"
+                    class="auth-form"
+                >
+
+                    {% csrf_token %}
+
+
+                    {% for error in form.non_field_errors %}
+
+                        <p class="form-error">
+                            {{ error }}
+                        </p>
+
+                    {% endfor %}
+
+
+                    {% for field in form %}
+
+                        <div class="form-group">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+
+                            {{ field }}
+
+
+                            {% for error in field.errors %}
+
+                                <p class="form-error">
+                                    {{ error }}
+                                </p>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endfor %}
+
+
+                    <button
+                        type="submit"
+                        class="auth-submit"
+                    >
+                        Login →
+                    </button>
+
+                </form>
+
+
+                <p class="auth-switch">
+                    Belum punya akun?
+                    <a href="{% url 'main:register' %}">
+                        Daftar di sini
+                    </a>.
+                </p>
+
+            </section>
+
+        </div>
+
+    </main>
+{% endblock content %}

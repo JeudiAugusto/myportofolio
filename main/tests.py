@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -12,6 +13,11 @@ class MainTest(TestCase):
         # Bersihkan data dari data migration agar kondisi setiap test terkontrol.
         Experience.objects.all().delete()
         Project.objects.all().delete()
+
+        self.admin_user = User.objects.create_superuser(
+            username="testadmin",
+            password="testpassword123",
+        )
 
         self.experience = Experience.objects.create(
             title="Staff Kajian dan Aksi Strategis",
@@ -524,6 +530,7 @@ class MainTest(TestCase):
     # =========================================================
 
     def test_create_project_page_is_accessible(self):
+        self.client.force_login(self.admin_user)
         response = self.client.get(
             reverse("main:create_project")
         )
@@ -538,6 +545,7 @@ class MainTest(TestCase):
         self.assertContains(response, "Add Project")
 
     def test_create_project_with_valid_data(self):
+        self.client.force_login(self.admin_user)
         data = {
             "title": "Tutorial 03 Project",
             "description": (
@@ -578,6 +586,7 @@ class MainTest(TestCase):
         )
 
     def test_create_project_with_invalid_data(self):
+        self.client.force_login(self.admin_user)
         initial_count = Project.objects.count()
 
         data = {
@@ -705,6 +714,7 @@ class MainTest(TestCase):
     # =========================================================
 
     def test_delete_project_with_post(self):
+        self.client.force_login(self.admin_user)
         delete_url = reverse(
             "main:delete_project",
             kwargs={"project_id": self.project.id},
@@ -730,6 +740,7 @@ class MainTest(TestCase):
         )
 
     def test_delete_project_with_get_does_not_delete(self):
+        self.client.force_login(self.admin_user)
         delete_url = reverse(
             "main:delete_project",
             kwargs={"project_id": self.project.id},
@@ -764,6 +775,8 @@ class MainTest(TestCase):
         )
 
     def test_delete_nonexistent_project_returns_404(self):
+        self.client.force_login(self.admin_user)
+
         nonexistent_uuid = (
             "11111111-1111-1111-1111-111111111111"
         )

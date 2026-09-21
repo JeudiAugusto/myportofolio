@@ -1105,7 +1105,7 @@
                     </div>
 
 
-                                        <div class="projects-section-actions">
+                        <div class="projects-section-actions">
 
                         <p class="projects-section-description">
                             Beberapa project yang menjadi bagian dari
@@ -1114,20 +1114,24 @@
                         </p>
 
 
-                        <div class="projects-controls">
+                        {% if user.is_superuser %}
 
-                            <a
-                                href="{% url 'main:create_project' %}"
-                                class="project-add-button"
-                            >
-                                <span aria-hidden="true">
-                                    +
-                                </span>
+                            <div class="projects-controls">
 
-                                Add Project
-                            </a>
+                                <a
+                                    href="{% url 'main:create_project' %}"
+                                    class="project-add-button"
+                                >
+                                    <span aria-hidden="true">
+                                        +
+                                    </span>
 
-                        </div>
+                                    Add Project
+                                </a>
+
+                            </div>
+
+                        {% endif %}
 
 
                         <form
@@ -1264,7 +1268,13 @@
 
                             {% endif %}
 
-                            {% include 'components/project_delete_modal.html' %}
+                            {% include 'components/project_star.html' with project=project %}
+
+                            {% if user.is_superuser %}
+
+                                {% include 'components/project_delete_modal.html' %}
+
+                            {% endif %}
 
 
                         </article>

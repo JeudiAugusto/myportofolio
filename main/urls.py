@@ -7,10 +7,14 @@ from main.views import (
     delete_project,
     get_experiences_json,
     get_projects_json,
+    login_user,
+    logout_user,
+    register,
     show_experience,
     show_main,
     show_projects,
     update_experience,
+    toggle_star,
 )
 
 
@@ -22,6 +26,21 @@ urlpatterns = [
         "",
         show_main,
         name="show_main",
+    ),
+    path(
+        "register/",
+        register,
+        name="register",
+    ),
+    path(
+        "login/",
+        login_user,
+        name="login",
+    ),
+    path(
+        "logout/",
+        logout_user,
+        name="logout",
     ),
     path(
         "experience/",
@@ -67,5 +86,10 @@ urlpatterns = [
         "projects/<uuid:project_id>/delete/",
         delete_project,
         name="delete_project",
+    ),
+    path(
+    "projects/<uuid:project_id>/star/",
+    toggle_star,
+    name="toggle_star",
     ),
 ]
