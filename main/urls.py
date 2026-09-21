@@ -15,6 +15,7 @@ from main.views import (
     show_projects,
     update_experience,
     toggle_star,
+    toggle_experience_star,
 )
 
 
@@ -91,5 +92,10 @@ urlpatterns = [
     "projects/<uuid:project_id>/star/",
     toggle_star,
     name="toggle_star",
+    ),
+    path(
+    "experience/<uuid:experience_id>/star/",
+    toggle_experience_star,
+    name="toggle_experience_star",
     ),
 ]

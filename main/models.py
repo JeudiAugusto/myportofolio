@@ -15,6 +15,12 @@ class Experience(models.Model):
         ("freelance", "Freelance"),
     ]
 
+    starred_by = models.ManyToManyField(
+        User,
+        related_name="starred_experiences",
+        blank=True,
+    )
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,

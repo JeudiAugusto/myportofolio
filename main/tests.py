@@ -1,6 +1,6 @@
 import json
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -17,6 +17,24 @@ class MainTest(TestCase):
         self.admin_user = User.objects.create_superuser(
             username="testadmin",
             password="testpassword123",
+        )
+
+        self.regular_user = User.objects.create_user(
+            username="testuser",
+            password="testpassword123",
+        )
+
+        self.editor_group, _ = Group.objects.get_or_create(
+            name="Editor"
+        )
+
+        self.editor_user = User.objects.create_user(
+            username="testeditor",
+            password="testpassword123",
+        )
+
+        self.editor_user.groups.add(
+            self.editor_group
         )
 
         self.experience = Experience.objects.create(
@@ -118,6 +136,7 @@ class MainTest(TestCase):
         self.assertContains(response, "Selesai")
 
     def test_experience_page_has_management_links(self):
+        self.client.force_login(self.admin_user)
         response = self.client.get(reverse("main:show_experience"))
 
         create_url = reverse("main:create_experience")
@@ -139,6 +158,7 @@ class MainTest(TestCase):
     # =========================================================
 
     def test_create_experience_page_is_accessible(self):
+        self.client.force_login(self.admin_user)
         response = self.client.get(
             reverse("main:create_experience")
         )
@@ -153,6 +173,7 @@ class MainTest(TestCase):
         self.assertContains(response, "Add Experience")
 
     def test_create_experience_with_valid_data(self):
+        self.client.force_login(self.admin_user)
         initial_count = Experience.objects.count()
 
         data = {
@@ -194,6 +215,7 @@ class MainTest(TestCase):
         )
 
     def test_create_experience_with_invalid_data(self):
+        self.client.force_login(self.admin_user)
         initial_count = Experience.objects.count()
 
         data = {
@@ -228,6 +250,7 @@ class MainTest(TestCase):
     # =========================================================
 
     def test_update_experience_page_is_accessible(self):
+        self.client.force_login(self.editor_user)
         update_url = reverse(
             "main:update_experience",
             kwargs={"experience_id": self.experience.id},
@@ -252,6 +275,7 @@ class MainTest(TestCase):
         self.assertContains(response, "Save Changes")
 
     def test_update_experience_with_valid_data(self):
+        self.client.force_login(self.editor_user)
         initial_count = Experience.objects.count()
         original_id = self.experience.id
 
@@ -379,6 +403,7 @@ class MainTest(TestCase):
     # =========================================================
 
     def test_delete_experience_with_post(self):
+        self.client.force_login(self.admin_user)
         delete_url = reverse(
             "main:delete_experience",
             kwargs={"experience_id": self.experience.id},
@@ -404,6 +429,7 @@ class MainTest(TestCase):
         )
 
     def test_delete_experience_with_get_does_not_delete(self):
+        self.client.force_login(self.admin_user)
         delete_url = reverse(
             "main:delete_experience",
             kwargs={"experience_id": self.experience.id},
@@ -438,6 +464,7 @@ class MainTest(TestCase):
         )
 
     def test_delete_nonexistent_experience_returns_404(self):
+        self.client.force_login(self.admin_user)
         nonexistent_uuid = (
             "11111111-1111-1111-1111-111111111111"
         )
@@ -791,3 +818,443 @@ class MainTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 404)
+
+    # =========================================================
+    # TUGAS 04 AUTHORIZATION TESTS
+    # =========================================================
+
+    def test_guest_experience_management_requires_login(self):
+        create_url = reverse("main:create_experience")
+        update_url = reverse(
+            "main:update_experience",
+            kwargs={"experience_id": self.experience.id},
+        )
+        delete_url = reverse(
+            "main:delete_experience",
+            kwargs={"experience_id": self.experience.id},
+        )
+
+        create_response = self.client.get(create_url)
+        update_response = self.client.get(update_url)
+        delete_response = self.client.post(delete_url)
+
+        self.assertEqual(create_response.status_code, 302)
+        self.assertEqual(update_response.status_code, 302)
+        self.assertEqual(delete_response.status_code, 302)
+
+        self.assertTrue(
+            create_response.url.startswith("/login/")
+        )
+        self.assertTrue(
+            update_response.url.startswith("/login/")
+        )
+        self.assertTrue(
+            delete_response.url.startswith("/login/")
+        )
+
+        self.assertTrue(
+            Experience.objects.filter(
+                id=self.experience.id
+            ).exists()
+        )
+
+    def test_regular_user_experience_permissions(self):
+        self.client.force_login(
+            self.regular_user
+        )
+
+        create_response = self.client.get(
+            reverse("main:create_experience")
+        )
+
+        update_response = self.client.get(
+            reverse(
+                "main:update_experience",
+                kwargs={
+                    "experience_id": self.experience.id,
+                },
+            )
+        )
+
+        delete_response = self.client.post(
+            reverse(
+                "main:delete_experience",
+                kwargs={
+                    "experience_id": self.experience.id,
+                },
+            )
+        )
+
+        self.assertEqual(
+            create_response.status_code,
+            403,
+        )
+        self.assertEqual(
+            update_response.status_code,
+            403,
+        )
+        self.assertEqual(
+            delete_response.status_code,
+            403,
+        )
+
+        self.assertTrue(
+            Experience.objects.filter(
+                id=self.experience.id
+            ).exists()
+        )
+
+    def test_editor_experience_permissions(self):
+        self.client.force_login(
+            self.editor_user
+        )
+
+        create_response = self.client.get(
+            reverse("main:create_experience")
+        )
+
+        update_response = self.client.get(
+            reverse(
+                "main:update_experience",
+                kwargs={
+                    "experience_id": self.experience.id,
+                },
+            )
+        )
+
+        delete_response = self.client.post(
+            reverse(
+                "main:delete_experience",
+                kwargs={
+                    "experience_id": self.experience.id,
+                },
+            )
+        )
+
+        self.assertEqual(
+            create_response.status_code,
+            403,
+        )
+        self.assertEqual(
+            update_response.status_code,
+            200,
+        )
+        self.assertEqual(
+            delete_response.status_code,
+            403,
+        )
+
+        self.assertTrue(
+            Experience.objects.filter(
+                id=self.experience.id
+            ).exists()
+        )
+
+    def test_superuser_experience_permissions(self):
+        self.client.force_login(
+            self.admin_user
+        )
+
+        create_response = self.client.get(
+            reverse("main:create_experience")
+        )
+
+        update_response = self.client.get(
+            reverse(
+                "main:update_experience",
+                kwargs={
+                    "experience_id": self.experience.id,
+                },
+            )
+        )
+
+        delete_response = self.client.post(
+            reverse(
+                "main:delete_experience",
+                kwargs={
+                    "experience_id": self.experience.id,
+                },
+            )
+        )
+
+        self.assertEqual(
+            create_response.status_code,
+            200,
+        )
+        self.assertEqual(
+            update_response.status_code,
+            200,
+        )
+        self.assertEqual(
+            delete_response.status_code,
+            302,
+        )
+
+        self.assertFalse(
+            Experience.objects.filter(
+                id=self.experience.id
+            ).exists()
+        )
+
+    def test_regular_user_can_star_and_unstar_experience(self):
+        self.client.force_login(
+            self.regular_user
+        )
+
+        star_url = reverse(
+            "main:toggle_experience_star",
+            kwargs={
+                "experience_id": self.experience.id,
+            },
+        )
+
+        self.assertFalse(
+            self.experience.starred_by.filter(
+                id=self.regular_user.id
+            ).exists()
+        )
+
+        first_response = self.client.post(
+            star_url
+        )
+
+        self.assertEqual(
+            first_response.status_code,
+            302,
+        )
+
+        self.assertTrue(
+            self.experience.starred_by.filter(
+                id=self.regular_user.id
+            ).exists()
+        )
+
+        second_response = self.client.post(
+            star_url
+        )
+
+        self.assertEqual(
+            second_response.status_code,
+            302,
+        )
+
+        self.assertFalse(
+            self.experience.starred_by.filter(
+                id=self.regular_user.id
+            ).exists()
+        )
+
+    def test_guest_cannot_star_experience(self):
+        star_url = reverse(
+            "main:toggle_experience_star",
+            kwargs={
+                "experience_id": self.experience.id,
+            },
+        )
+
+        response = self.client.post(
+            star_url
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        self.assertTrue(
+            response.url.startswith("/login/")
+        )
+
+        self.assertEqual(
+            self.experience.starred_by.count(),
+            0,
+        )
+
+    def test_experience_role_based_ui(self):
+        experience_url = reverse(
+            "main:show_experience"
+        )
+
+        create_url = reverse(
+            "main:create_experience"
+        )
+
+        update_url = reverse(
+            "main:update_experience",
+            kwargs={
+                "experience_id": self.experience.id,
+            },
+        )
+
+        delete_url = reverse(
+            "main:delete_experience",
+            kwargs={
+                "experience_id": self.experience.id,
+            },
+        )
+
+        star_url = reverse(
+            "main:toggle_experience_star",
+            kwargs={
+                "experience_id": self.experience.id,
+            },
+        )
+
+        cases = [
+            (
+                "guest",
+                None,
+                False,
+                False,
+                False,
+                True,
+            ),
+            (
+                "regular",
+                self.regular_user,
+                False,
+                False,
+                False,
+                True,
+            ),
+            (
+                "editor",
+                self.editor_user,
+                False,
+                True,
+                False,
+                True,
+            ),
+            (
+                "superuser",
+                self.admin_user,
+                True,
+                True,
+                True,
+                True,
+            ),
+        ]
+
+        for (
+            role,
+            user,
+            can_create,
+            can_update,
+            can_delete,
+            can_star,
+        ) in cases:
+            with self.subTest(role=role):
+                self.client.logout()
+
+                if user is not None:
+                    self.client.force_login(
+                        user
+                    )
+
+                response = self.client.get(
+                    experience_url
+                )
+
+                self.assertEqual(
+                    response.status_code,
+                    200,
+                )
+
+                content = response.content.decode(
+                    "utf-8"
+                )
+
+                if can_create:
+                    self.assertIn(
+                        create_url,
+                        content,
+                    )
+                else:
+                    self.assertNotIn(
+                        create_url,
+                        content,
+                    )
+
+                if can_update:
+                    self.assertIn(
+                        update_url,
+                        content,
+                    )
+                else:
+                    self.assertNotIn(
+                        update_url,
+                        content,
+                    )
+
+                if can_delete:
+                    self.assertIn(
+                        delete_url,
+                        content,
+                    )
+                else:
+                    self.assertNotIn(
+                        delete_url,
+                        content,
+                    )
+
+                if can_star:
+                    self.assertIn(
+                        star_url,
+                        content,
+                    )
+                else:
+                    self.assertNotIn(
+                        star_url,
+                        content,
+                    )
+
+    def test_experience_json_remains_safe_with_star_data(self):
+        self.experience.starred_by.add(
+            self.regular_user
+        )
+
+        response = self.client.get(
+            reverse(
+                "main:get_experiences_json"
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
+
+        data = json.loads(
+            response.content
+        )
+
+        self.assertEqual(
+            len(data),
+            1,
+        )
+
+        fields = data[0]["fields"]
+
+        self.assertIn(
+            "starred_by",
+            fields,
+        )
+
+        self.assertEqual(
+            len(fields["starred_by"]),
+            1,
+        )
+
+        self.assertEqual(
+            fields["starred_by"],
+            [["testuser"]],
+        )
+
+        response_text = response.content.decode(
+            "utf-8"
+        )
+
+        self.assertNotIn(
+            '"password"',
+            response_text,
+        )

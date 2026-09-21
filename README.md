@@ -519,3 +519,50 @@ Dalam pengerjaan Tugas 3, saya menggunakan **ChatGPT** sebagai alat bantu untuk 
 Bagian yang dibantu AI terutama meliputi struktur `ModelForm`, pola view create/update/delete, serialization dan deserialization JSON, penataan UI form, serta penyusunan test case. Saya tidak langsung menganggap setiap output AI benar. Setiap perubahan diperiksa menggunakan `python manage.py check`, diuji melalui browser, dicek langsung pada database melalui Django shell, dan akhirnya diuji menggunakan `python manage.py test`.
 
 Salah satu keterbatasan AI yang saya temukan adalah AI dapat memberikan asumsi mengenai requirement atau struktur project apabila konteks yang diberikan belum lengkap. Karena itu, saya melakukan cross-check terhadap instruksi resmi PBP dan menyesuaikan kode dengan model serta template yang sudah ada. Contohnya, field yang berhubungan dengan timestamp tidak saya masukkan ke dalam `ExperienceForm` karena field tersebut tidak termasuk data yang perlu diisi melalui form. Saya juga melakukan pengujian manual terhadap alur Create → Update → Delete untuk memastikan jumlah object di database berubah sesuai yang diharapkan.
+---
+
+### Tugas 4
+
+Pada Tugas 4, saya melanjutkan fitur Experience dari Tugas 3 dengan menerapkan autentikasi, otorisasi berbasis role, dan fitur Star.
+
+#### Progress Tugas 4
+
+Hak akses dibagi menjadi empat role:
+
+- Guest dapat melihat Experience dan tombol Star, tetapi ketika melakukan aksi Star akan diarahkan ke halaman login. Guest tidak dapat melakukan create, update, atau delete.
+- User biasa dapat melihat Experience serta melakukan Star dan Unstar, tetapi tidak dapat melakukan create, update, atau delete.
+- Editor memiliki hak seperti user biasa dan dapat melakukan update Experience, tetapi tidak dapat melakukan create atau delete.
+- Superuser dapat melakukan Star, Unstar, create, update, dan delete Experience.
+
+Pembatasan akses tidak hanya dilakukan melalui tampilan template, tetapi juga diperiksa pada sisi server. User yang belum login diarahkan ke halaman login, sedangkan user yang sudah login tetapi tidak memiliki izin akan menerima HTTP 403 Forbidden.
+
+Role Editor menggunakan Django Group bernama `Editor`. Group tersebut dibuat melalui data migration sehingga tersedia ketika project dijalankan pada database baru.
+
+Model Experience memiliki relasi `ManyToManyField` bernama `starred_by` untuk menyimpan user yang memberikan Star pada suatu Experience.
+
+Fitur Star menggunakan request POST dan CSRF token. Jika user sudah memberikan Star, relasi akan dihapus. Jika belum, user akan ditambahkan ke `starred_by`.
+
+Endpoint JSON `/api/experiences/` menggunakan `use_natural_foreign_keys=True` agar relasi user tidak menggunakan ID internal database dan tidak mengekspos data sensitif seperti password.
+
+Automated testing mencakup akses Guest, User biasa, Editor, Superuser, Star/Unstar, role-based UI, dan keamanan endpoint JSON.
+
+Hasil akhir pengujian lokal:
+
+    Found 42 test(s).
+    ..........................................
+    Ran 42 tests in ...
+    OK
+
+#### AI Disclosure Tugas 4
+
+Dalam pengerjaan Tugas 4 saya menggunakan ChatGPT sebagai alat bantu pembelajaran, debugging, review requirement, dan penyusunan automated test.
+
+Pengerjaan dilakukan secara bertahap. Setiap perubahan diverifikasi menggunakan `python manage.py check`, migration, Django shell, dan `python manage.py test`.
+
+AI membantu dalam memahami pembagian role, server-side authorization, relasi ManyToMany untuk fitur Star, pengujian JSON, serta penyusunan test untuk setiap role.
+
+Saya tetap melakukan verifikasi terhadap setiap saran. Contohnya, error `UNIQUE constraint failed: auth_group.name` terjadi karena Group Editor sudah dibuat oleh migration tetapi test mencoba membuat Group yang sama kembali. Setup test kemudian diperbaiki menggunakan `get_or_create()`.
+
+Automated test juga membantu menemukan bahwa tombol Star untuk Guest masih tersembunyi. Template kemudian diperbaiki agar tombol tetap terlihat, sedangkan keamanan tetap dijaga menggunakan `@login_required` pada view.
+
+Dari proses ini saya memahami bahwa penggunaan AI tetap harus disertai pengecekan requirement, source code, dan pengujian langsung.

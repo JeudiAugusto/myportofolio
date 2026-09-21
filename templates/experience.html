@@ -859,12 +859,14 @@
 
                     <div class="exp-actions">
 
-                        <a
-                            href="{% url 'main:create_experience' %}"
-                            class="exp-primary-button"
-                        >
-                            + Add Experience
-                        </a>
+                        {% if user.is_superuser %}
+                            <a
+                                href="{% url 'main:create_experience' %}"
+                                class="exp-primary-button"
+                            >
+                                + Add Experience
+                            </a>
+                        {% endif %}
 
                         <a
                             href="mailto:jeudiaugustoasadullah@gmail.com"
@@ -1132,31 +1134,42 @@
 
                                 <div class="exp-card-actions">
 
-                                    <a
-                                        href="{% url 'main:update_experience' experience.id %}"
-                                        class="exp-update-button"
-                                    >
-                                        Update Experience
-                                    </a>
+                                    {% include 'components/experience_star.html' with experience=experience %}
 
 
-                                    <form
-                                        method="POST"
-                                        action="{% url 'main:delete_experience' experience.id %}"
-                                        class="exp-delete-form"
-                                        onsubmit="return confirm('Yakin ingin menghapus experience ini?');"
-                                    >
+                                    {% if user.is_superuser or is_editor %}
 
-                                        {% csrf_token %}
-
-                                        <button
-                                            type="submit"
-                                            class="exp-delete-button"
+                                        <a
+                                            href="{% url 'main:update_experience' experience.id %}"
+                                            class="exp-update-button"
                                         >
-                                            Delete Experience
-                                        </button>
+                                            Update Experience
+                                        </a>
 
-                                    </form>
+                                    {% endif %}
+
+
+                                    {% if user.is_superuser %}
+
+                                        <form
+                                            method="POST"
+                                            action="{% url 'main:delete_experience' experience.id %}"
+                                            class="exp-delete-form"
+                                            onsubmit="return confirm('Yakin ingin menghapus experience ini?');"
+                                        >
+
+                                            {% csrf_token %}
+
+                                            <button
+                                                type="submit"
+                                                class="exp-delete-button"
+                                            >
+                                                Delete Experience
+                                            </button>
+
+                                        </form>
+
+                                    {% endif %}
 
                                 </div>
 
