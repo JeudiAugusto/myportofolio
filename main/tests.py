@@ -515,20 +515,26 @@ class MainTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "projects.html")
         self.assertTemplateUsed(response, "base.html")
-        self.assertContains(response, self.project.title)
         self.assertContains(
             response,
-            self.project.description,
+            'id="project-search-form"',
         )
-        self.assertContains(response, "PHP")
-        self.assertContains(response, "JavaScript")
-        self.assertContains(response, "Team Project")
-        self.assertContains(response, "Finance Web App")
         self.assertContains(
             response,
-            self.project.repository_url,
+            'id="search-input"',
         )
-
+        self.assertContains(
+            response,
+            'id="grid"',
+        )
+        self.assertContains(
+            response,
+            "BASE_PROJECTS_ENDPOINT",
+        )
+        self.assertContains(
+            response,
+            "fetchProjects",
+        )
     def test_empty_projects_page(self):
         Project.objects.all().delete()
 
@@ -539,9 +545,17 @@ class MainTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            "Belum ada project yang ditambahkan.",
+            "Belum ada project yang ditambahkan atau ditemukan.",
         )
 
+        api_response = self.client.get(
+            reverse("main:get_projects_json")
+        )
+
+        self.assertEqual(
+            json.loads(api_response.content),
+            [],
+        )
     def test_projects_link_to_experience(self):
         response = self.client.get(
             reverse("main:show_projects")
@@ -718,24 +732,29 @@ class MainTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Cashie")
-        self.assertNotContains(
-            response,
-            "Personal Portfolio",
-        )
         self.assertEqual(
             response.context["title_query"],
             "Cashie",
         )
-
+        self.assertContains(
+            response,
+            'value="Cashie"',
+        )
     def test_projects_page_search_is_case_insensitive(self):
         response = self.client.get(
-            reverse("main:show_projects"),
+            reverse("main:get_projects_json"),
             {"title": "cashie"},
         )
 
-        self.assertContains(response, "Cashie")
+        self.assertEqual(response.status_code, 200)
 
+        data = json.loads(response.content)
+
+        self.assertEqual(len(data), 1)
+        self.assertEqual(
+            data[0]["fields"]["title"],
+            "Cashie",
+        )
     # =========================================================
     # DELETE PROJECT
     # =========================================================
