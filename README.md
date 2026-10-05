@@ -566,3 +566,13 @@ Saya tetap melakukan verifikasi terhadap setiap saran. Contohnya, error `UNIQUE 
 Automated test juga membantu menemukan bahwa tombol Star untuk Guest masih tersembunyi. Template kemudian diperbaiki agar tombol tetap terlihat, sedangkan keamanan tetap dijaga menggunakan `@login_required` pada view.
 
 Dari proses ini saya memahami bahwa penggunaan AI tetap harus disertai pengecekan requirement, source code, dan pengujian langsung.
+
+### Tugas 5
+1. **Jelaskan apa itu debouncing dan mengapa teknik ini penting diterapkan pada fitur pencarian yang menggunakan AJAX!**
+   Debouncing adalah teknik pemrograman yang menunda eksekusi sebuah fungsi sampai jeda waktu tertentu (misal 300ms) berlalu sejak interaksi terakhir. Pada pencarian AJAX, ini penting agar aplikasi tidak menembakkan request ke server pada setiap ketikan huruf. Tanpa debouncing, server berisiko overload dan antarmuka pengguna menjadi lag.
+
+2. **Jelaskan fungsi dari penggunaan await ketika kita menggunakan fetch()! Apa yang akan terjadi jika kita tidak menggunakan await?**
+   wait digunakan untuk menjeda eksekusi baris kode berikutnya sampai *Promise* dari fungsi asynchronous (seperti etch()) berstatus *resolved* atau selesai mengembalikan data. Jika tidak menggunakan wait, kode di bawahnya akan langsung dieksekusi saat data belum tiba, menyebabkan variabel berisi objek *Promise* menggantung dan berujung pada error saat mencoba merender data tersebut ke HTML.
+
+3. **Jelaskan apa itu serangan XSS (Cross-Site Scripting) dan mengapa data yang ditampilkan melalui AJAX/JavaScript lebih rentan terhadap serangan ini?**
+   XSS adalah serangan yang dilakukan dengan cara menginjeksi skrip berbahaya (seperti tag <script>) ke dalam input data, yang kemudian terender di halaman pengguna lain. Data yang disisipkan melalui AJAX menggunakan manipulasi DOM (seperti .innerHTML) sangat rentan karena browser akan mengeksekusi *string* HTML secara mentah. Hal ini berbeda dengan sistem *template* Django yang secara default melakukan *auto-escaping* untuk mengubah karakter tag HTML menjadi entitas yang aman.

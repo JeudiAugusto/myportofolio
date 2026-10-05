@@ -490,3 +490,56 @@ def toggle_star(request, project_id):
     return redirect(
         "main:show_projects"
     )
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import json
+
+# Pastikan import ada, tidak akan error jika sudah ter-import di atas
+try:
+    from .models import Experience
+except ImportError:
+    pass
+try:
+    from .forms import ExperienceForm
+except ImportError:
+    pass
+
+def experience_json(request):
+    query = request.GET.get('q', '')
+    if query:
+        experiences = Experience.objects.filter(title__icontains=query)
+    else:
+        experiences = Experience.objects.all()
+
+    data = []
+    for exp in experiences:
+        is_starred = False
+        star_count = 0
+        if hasattr(exp, 'starred_by'):
+            star_count = exp.starred_by.count()
+            if request.user.is_authenticated:
+                is_starred = exp.starred_by.filter(id=request.user.id).exists()
+
+        data.append({
+            'id': exp.id,
+            'title': getattr(exp, 'title', ''),
+            'description': getattr(exp, 'description', ''),
+            'year': getattr(exp, 'year', ''),
+            'role': getattr(exp, 'role', ''),
+            'is_starred': is_starred,
+            'star_count': star_count,
+        })
+    return JsonResponse({'experiences': data})
+
+@require_POST
+def create_experience_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse({'status': 'error', 'message': 'Forbidden'}, status=403)
+
+    form = ExperienceForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'status': 'success', 'message': 'Experience added successfully'}, status=201)
+    else:
+        errors = json.loads(form.errors.as_json())
+        return JsonResponse({'status': 'error', 'message': 'Validation failed', 'errors': errors}, status=400)

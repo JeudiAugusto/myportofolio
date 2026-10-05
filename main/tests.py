@@ -1277,3 +1277,20 @@ class MainTest(TestCase):
             '"password"',
             response_text,
         )
+
+from django.test import TestCase, Client
+from django.contrib.auth.models import User
+
+class ExperienceAjaxTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_superuser('admin_exp', 'admin@exp.com', 'adminpass')
+
+    def test_experience_json_view(self):
+        response = self.client.get('/experiences/json/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('experiences', response.json())
+
+    def test_create_experience_ajax_forbidden(self):
+        response = self.client.post('/experiences/create-ajax/', {'title': 'Test'})
+        self.assertEqual(response.status_code, 403)
