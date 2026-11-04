@@ -4,3 +4,4 @@ psycopg2-binary
 python-dotenv
 whitenoise
 selenium==4.49.0
+djangorestframework~=3.18.3

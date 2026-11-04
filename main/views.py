@@ -171,6 +171,7 @@ def show_experience(request):
     context = {
         "name": "Jeudi Augusto Asadullah",
         "experience_list": experiences,
+        "experience_form": ExperienceForm(),
         "is_editor": is_editor(request.user),
     }
 

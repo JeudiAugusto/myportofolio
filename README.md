@@ -576,3 +576,51 @@ Dari proses ini saya memahami bahwa penggunaan AI tetap harus disertai pengeceka
 
 3. **Jelaskan apa itu serangan XSS (Cross-Site Scripting) dan mengapa data yang ditampilkan melalui AJAX/JavaScript lebih rentan terhadap serangan ini?**
    XSS adalah serangan yang dilakukan dengan cara menginjeksi skrip berbahaya (seperti tag <script>) ke dalam input data, yang kemudian terender di halaman pengguna lain. Data yang disisipkan melalui AJAX menggunakan manipulasi DOM (seperti .innerHTML) sangat rentan karena browser akan mengeksekusi *string* HTML secara mentah. Hal ini berbeda dengan sistem *template* Django yang secara default melakukan *auto-escaping* untuk mengubah karakter tag HTML menjadi entitas yang aman.
+
+
+### Tutorial 7 ? Django REST Framework
+
+Implementasi mengikuti [Tutorial 07 PBP](https://pbp.cs.ui.ac.id/tutorial/tutorial-7.html) pada proyek dan database yang sama. Halaman Projects memakai API DRF untuk pencarian, tambah, star/unstar, dan hapus tanpa reload. Pola tersebut juga diterapkan pada Experience, termasuk create/update melalui AJAX dan hak akses Editor.
+
+#### Penyesuaian model
+
+Model Project yang sudah ada dipertahankan: `technologies` merupakan padanan `tech_stack`, sedangkan `repository_url` merupakan padanan `project_url`. Field tambahan `year`, `role`, dan `focus` tetap wajib. Model ini tidak memiliki `project_image_url`, sehingga field gambar contoh tutorial tidak ditambahkan. Template yang digunakan adalah `templates/projects.html` dan `templates/experience.html`; template Experience di folder app bukan template aktif karena direktori template proyek didahulukan.
+
+#### Endpoint dan izin
+
+| Endpoint | Method | Akses |
+| --- | --- | --- |
+| `/api/v1/projects/` | GET, HEAD | Publik; pencarian `?title=...` |
+| `/api/v1/projects/` | POST | Superuser |
+| `/api/v1/projects/<uuid>/` | GET, HEAD | Publik |
+| `/api/v1/projects/<uuid>/` | PUT, PATCH, DELETE | Superuser |
+| `/api/v1/projects/<uuid>/star/` | POST | Akun login |
+| `/api/v1/experiences/` | GET, HEAD | Publik; pencarian `?title=...` |
+| `/api/v1/experiences/` | POST | Superuser |
+| `/api/v1/experiences/<uuid>/` | GET, HEAD | Publik |
+| `/api/v1/experiences/<uuid>/` | PUT, PATCH | Superuser atau anggota Group Editor |
+| `/api/v1/experiences/<uuid>/` | DELETE | Superuser |
+| `/api/v1/experiences/<uuid>/star/` | POST | Akun login |
+
+Browsable API tersedia pada endpoint tersebut; login API tersedia di `/api-auth/login/`. Gunakan `?format=json` atau header `Accept: application/json` untuk JSON. Endpoint lama tetap tersedia untuk kompatibilitas.
+
+Serializer menghasilkan objek datar (`id`, `title`, dan seterusnya), bukan bentuk `pk`/`fields`. ID dan informasi star hanya bisa dibaca. Validasi menolak judul kosong/tag saja, URL tidak valid, serta kategori Experience yang tidak dikenal. Data teks tetap di-escape saat dirender; tautan repository hanya menggunakan HTTP/HTTPS. SessionAuthentication menggunakan login Django yang sudah ada, dengan token CSRF untuk operasi tulis.
+
+POST sukses menghasilkan 201, GET/update/star menghasilkan 200, DELETE menghasilkan 204 tanpa body. Input salah menghasilkan 400, izin/CSRF gagal 403, objek tidak ditemukan 404, dan method tidak didukung 405. Frontend menangani error DRF, debounce 300 ms, pembatalan pencarian lama, status loading/kosong/error, dan toast.
+
+#### Menjalankan dan memeriksa
+
+```powershell
+.\env\Scripts\python.exe -m pip install -r requirements.txt
+.\env\Scripts\python.exe manage.py check
+.\env\Scripts\python.exe manage.py migrate
+.\env\Scripts\python.exe manage.py test main.tests_api --verbosity 2
+.\env\Scripts\python.exe manage.py test main
+.\env\Scripts\python.exe manage.py runserver
+```
+
+`main/tests_api.py` mencakup 13 tes Projects dari tutorial yang disesuaikan dengan model, ditambah 8 tes Experience. Tes memakai database pengujian terpisah. Pengujian meliputi CRUD, pencarian, validasi, field read-only, star akun aktif, perbedaan role, dan session dengan/tanpa CSRF.
+
+Untuk pemeriksaan manual, buka Projects sebagai guest, akun biasa, dan superuser. Coba pencarian kosong, tambah melalui modal, star/unstar, lalu hapus. Pada Experience, Editor dapat memperbarui data tetapi tidak dapat menambah/menghapus. Form tambah/update lama tetap dapat diakses dan kini memakai API melalui JavaScript, dengan fallback POST Django jika JavaScript tidak aktif.
+
+Commit/push GitHub dan deployment PWS dilakukan terpisah oleh pemilik repositori. Sesudah deploy, periksa login dan operasi tulis di PWS. Submisi SCELE membutuhkan tautan **commit**, bukan hanya tautan repositori.
