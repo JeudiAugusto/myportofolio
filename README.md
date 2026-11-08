@@ -681,9 +681,9 @@ Format deklarasi mengikuti [deklarasi AI ValuWaste](https://github.com/TK-PBP-C-
 
 Proyek dikembangkan dari basis portofolio saya yang sudah tersedia sebelum sesi ini. Pada commit `eaf00d5`, model Experience, serializer, permission, endpoint DRF, integrasi AJAX, dan tes awal sudah ada. Bantuan AI pada sesi ini melanjutkan basis tersebut melalui pemeriksaan kesesuaian panduan, penguatan pengujian, dan penyusunan dokumentasi. Pembedaan ini menunjukkan kontribusi proyek yang sudah tersedia tanpa mengklaim bahwa bantuan AI terbatas pada fitur di luar panduan: review persyaratan, tes wajib, dan refleksi juga dibantu AI.
 
-| Anggota | Alat AI | Dipakai untuk | Basis dan keputusan pemilik proyek |
-| --- | --- | --- | --- |
-| Jeudi Augusto Asadullah | Codex (OpenAI) | Memeriksa panduan resmi dan kode lokal, melengkapi tes regresi permission/CSRF/star, menjalankan pemeriksaan otomatis, dan menyusun bagian Tugas 6 README | Melanjutkan portofolio dan bagian Experience yang telah tersedia; meminta penyelesaian sesuai panduan dan format dokumentasi kelompok. Review pribadi serta submisi akhir tetap menjadi tanggung jawab pemilik proyek. |
+| Alat AI | Dipakai untuk | Basis dan keputusan pemilik proyek |
+| --- | --- | --- |
+| Codex (OpenAI) | Memeriksa panduan resmi dan kode lokal, melengkapi tes regresi permission/CSRF/star, menjalankan pemeriksaan otomatis, dan menyusun bagian Tugas 6 README | Melanjutkan portofolio dan bagian Experience yang telah tersedia; meminta penyelesaian sesuai panduan dan format dokumentasi kelompok. Review pribadi serta submisi akhir tetap menjadi tanggung jawab pemilik proyek. |
 
 ##### Ringkasan prompt dan respons
 
