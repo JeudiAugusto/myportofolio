@@ -170,7 +170,13 @@ class ExperienceAPITest(APITestCase):
             self.client.force_authenticate(user=user)
             self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, 403)
             self.assertEqual(self.client.patch(self.detail_url, self.payload, format="json").status_code, 403)
+            self.assertEqual(self.client.put(self.detail_url, self.payload, format="json").status_code, 403)
             self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
+            self.experience.refresh_from_db()
+            self.assertEqual(self.experience.title, "Organization")
+            self.assertEqual(self.experience.description, "Activities")
+            self.assertEqual(self.experience.category, "organization")
+            self.assertEqual(Experience.objects.count(), 1)
         self.assertEqual(Experience.objects.count(), 1)
 
     def test_editor_can_update_but_not_create_or_delete(self):
@@ -182,6 +188,9 @@ class ExperienceAPITest(APITestCase):
         self.assertEqual(self.client.put(self.detail_url, self.payload, format="json").status_code, 200)
         self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, 403)
         self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, self.payload["title"])
+        self.assertEqual(Experience.objects.count(), 1)
 
     def test_owner_create_and_delete(self):
         self.client.force_authenticate(user=self.owner)
@@ -206,13 +215,15 @@ class ExperienceAPITest(APITestCase):
 
     def test_star_uses_experience_and_current_user(self):
         self.assertEqual(self.client.post(self.star_url).status_code, 403)
+        self.assertEqual(self.experience.starred_by.count(), 0)
         self.client.force_authenticate(user=self.visitor)
-        response = self.client.post(self.star_url)
+        response = self.client.post(self.star_url, {"user": self.owner.pk}, format="json")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.data["is_starred"])
         self.assertEqual(response.data["starred_by_names"], "reader")
         self.assertNotIn("email", response.data)
         self.assertTrue(self.experience.starred_by.filter(pk=self.visitor.pk).exists())
+        self.assertFalse(self.experience.starred_by.filter(pk=self.owner.pk).exists())
         self.client.force_authenticate(user=self.editor)
         self.assertFalse(self.client.get(self.detail_url).data["is_starred"])
         self.client.force_authenticate(user=self.visitor)
@@ -221,12 +232,34 @@ class ExperienceAPITest(APITestCase):
 
     def test_session_csrf_for_member_star(self):
         client = APIClient(enforce_csrf_checks=True)
-        client.force_login(self.visitor)
+        self.assertTrue(client.login(username="reader", password="test-password"))
         self.assertEqual(client.post(self.star_url).status_code, 403)
+        self.assertEqual(self.experience.starred_by.count(), 0)
         page = client.get(reverse("main:show_experience"))
         self.assertEqual(page.status_code, 200)
         token = client.cookies["csrftoken"].value
         self.assertEqual(client.post(self.star_url, HTTP_X_CSRFTOKEN=token).status_code, 200)
+
+    def test_editor_session_patch_requires_csrf(self):
+        client = APIClient(enforce_csrf_checks=True)
+        self.assertTrue(client.login(username="editor", password="test-password"))
+        payload = {"title": "Session edit"}
+        self.assertEqual(client.patch(self.detail_url, payload, format="json").status_code, 403)
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, "Organization")
+        client.get(reverse("main:show_experience"))
+        response = client.patch(self.detail_url, payload, format="json",
+                                HTTP_X_CSRFTOKEN=client.cookies["csrftoken"].value)
+        self.assertEqual(response.status_code, 200)
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, "Session edit")
+
+    def test_invalid_patch_does_not_change_existing_data(self):
+        self.client.force_authenticate(user=self.editor)
+        response = self.client.patch(self.detail_url, {"title": "<b></b>"}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, "Organization")
 
     def test_safe_methods_do_not_mutate(self):
         self.client.force_authenticate(user=self.owner)

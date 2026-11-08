@@ -624,3 +624,84 @@ POST sukses menghasilkan 201, GET/update/star menghasilkan 200, DELETE menghasil
 Untuk pemeriksaan manual, buka Projects sebagai guest, akun biasa, dan superuser. Coba pencarian kosong, tambah melalui modal, star/unstar, lalu hapus. Pada Experience, Editor dapat memperbarui data tetapi tidak dapat menambah/menghapus. Form tambah/update lama tetap dapat diakses dan kini memakai API melalui JavaScript, dengan fallback POST Django jika JavaScript tidak aktif.
 
 Commit/push GitHub dan deployment PWS dilakukan terpisah oleh pemilik repositori. Sesudah deploy, periksa login dan operasi tulis di PWS. Submisi SCELE membutuhkan tautan **commit**, bukan hanya tautan repositori.
+
+### Tugas 6
+
+Implementasi mengacu pada [Individual Assignment 6 PBP](https://pbp.cs.ui.ac.id/assignments/individual/tugas-6.html). Bagian tugas individu adalah **Experience**, menggunakan model, UUID, data, dan relasi `starred_by` yang sudah ada. Projects tetap menjadi bagian Tutorial 07.
+
+1. **REST, JSON, PUT, dan PATCH**
+
+   REST adalah gaya arsitektur yang mengatur interaksi client dan server melalui resource dengan antarmuka yang konsisten, antara lain identifikasi resource melalui URI, semantik method HTTP, dan komunikasi stateless. JSON hanya format representasi data; endpoint yang mengembalikan JSON belum otomatis mengikuti prinsip REST. Contohnya, menghapus Experience melalui GET tetap salah meskipun responsnya JSON. Pada proyek ini resource berada di `/api/v1/experiences/` dan `/api/v1/experiences/<uuid>/`, dengan method serta status HTTP sesuai operasinya. Autentikasi menggunakan session Django sesuai panduan; karena masih memakai state sesi di server, implementasi ini tidak diklaim memenuhi seluruh batasan REST secara ketat.
+
+   PUT digunakan untuk mengirim representasi lengkap field yang dapat ditulis: misalnya mengganti judul, deskripsi, kategori, dan thumbnail Experience sekaligus. Field wajib yang hilang menyebabkan 400. PATCH digunakan untuk perubahan sebagian, misalnya hanya `{"title": "Research Assistant"}`; field yang tidak dikirim tetap dipertahankan. Form edit memakai PATCH. Dalam DRF, perlakuan field opsional yang tidak dikirim mengikuti konfigurasi serializer; PUT tidak berarti seluruh field opsional otomatis dikosongkan.
+
+2. **Peran serializer**
+
+   `ExperienceSerializer` mengubah instance model menjadi representasi yang dapat dirender sebagai JSON, memvalidasi input, serta membuat atau memperbarui instance melalui `.save()`. Daftar field eksplisit membatasi data yang keluar. `validate_title` dan `validate_description` menggunakan `strip_tags`, sedangkan field perhitungan seperti `star_count` dan `is_starred` bersifat read-only. Dibandingkan dictionary manual dan `JsonResponse`, validasi, pesan error per field, konversi tipe, serta create/update menjadi terpusat dan lebih mudah diuji. `strip_tags` tetap perlu disertai escaping saat teks dimasukkan ke HTML.
+
+3. **Autentikasi dan otorisasi**
+
+   Autentikasi menjawab siapa pengirim request; `SessionAuthentication` menggunakan sesi login Django untuk mengisi `request.user`. Otorisasi menentukan tindakan yang boleh dilakukan akun tersebut. `IsPortfolioOwnerOrEditorOrReadOnly` mengizinkan pembacaan publik, perubahan PUT/PATCH oleh Editor, dan seluruh operasi pengelolaan oleh superuser. Pengguna biasa hanya dapat membaca dan melakukan star melalui endpoint dengan `IsAuthenticated`. Menyembunyikan tombol hanya membantu antarmuka: pengguna tetap dapat mengirim request langsung. Karena itu, permission wajib diperiksa di server sebelum database diubah.
+
+4. **CSRF dan pengujian autentikasi**
+
+   Browser otomatis menyertakan cookie sesi pada request yang memenuhi aturan cookie. Tanpa pemeriksaan CSRF, situs lain dapat mencoba memicu perubahan dengan sesi korban. Request tulis memakai header `X-CSRFToken`, yang diperiksa terhadap token CSRF sesi/browser. Login saja tidak menggantikan pemeriksaan tersebut. `force_authenticate` memasukkan identitas uji secara langsung dan melewati alur autentikasi sesi, sehingga tidak membuktikan perlindungan CSRF. Tes memakai `APIClient(enforce_csrf_checks=True)` dan `.login()`: POST star serta PATCH Editor tanpa token menghasilkan 403 dan database tetap sama; dengan token dari halaman Experience, operasi berhasil.
+
+#### Implementasi dan verifikasi
+
+| Kebutuhan | Implementasi |
+| --- | --- |
+| Serializer dengan field eksplisit, validasi, dan star read-only | `main/serializers.py`, `ExperienceSerializer` |
+| Izin guest, pengguna biasa, Editor, dan superuser | `main/permissions.py` |
+| Function-based API, session, pencarian `?title=...` | `main/api_views.py` |
+| List, detail, dan star di `/api/v1/experiences/` | `main/api_urls.py` |
+| Daftar, pencarian, tambah, star, hapus tanpa reload | `templates/experience.html` |
+| Edit melalui PATCH, error API melalui toast | `templates/components/experience_api_form.html` |
+| Uji setiap role, database setelah penolakan, validasi, star, CSRF | `main/tests_api.py`, `ExperienceAPITest` |
+
+Pengalaman tambahan yang sudah tersedia meliputi pembatalan request pencarian lama dengan `AbortController`, loading/empty/error state, konfirmasi hapus, dan tombol yang dinonaktifkan selama request berlangsung untuk mengurangi pengiriman ganda. Penyelesaian Tugas 6 memperkuat tes regresi untuk memastikan penolakan PUT/PATCH tidak mengubah data, identitas pemberi star tidak dapat dipalsukan melalui payload, dan login Editor tetap memerlukan CSRF.
+
+Gunakan virtual environment dan dependency pada bagian setup, lalu jalankan:
+
+```powershell
+.\env\Scripts\python.exe manage.py migrate
+.\env\Scripts\python.exe manage.py check
+.\env\Scripts\python.exe manage.py test main
+.\env\Scripts\python.exe manage.py makemigrations --check --dry-run
+.\env\Scripts\python.exe manage.py runserver
+```
+
+Untuk pemeriksaan browser, buka `/experience/`, `/projects/`, dan `/api/v1/experiences/`. Coba pencarian, tambah, edit, star/unstar, dan hapus menggunakan role yang sesuai. Uji penolakan API melalui request langsung juga diperlukan, bukan hanya melihat tombol. Tes otomatis memakai database pengujian terpisah.
+
+Hasil verifikasi lokal pada sesi 8 November 2026: **67 tes lulus**, `manage.py check` tanpa masalah, dan pemeriksaan migrasi menghasilkan `No changes detected`. Server lokal berhasil menyajikan `/experience/`, `/projects/`, serta Browsable API Experience dan Projects dengan HTTP 200. Pemeriksaan HTTP ini bukan pengujian interaksi browser secara menyeluruh.
+
+#### Deklarasi Penggunaan AI Tugas 6
+
+Format deklarasi mengikuti [deklarasi AI ValuWaste](https://github.com/TK-PBP-C-04-GASAL-2026-2027/valuwaste#deklarasi-penggunaan-ai): tabel kontribusi, ringkasan prompt dan jawaban, serta keterbatasan. Cakupan berikut khusus sesi penyelesaian Tugas 6; deklarasi tugas sebelumnya tetap berlaku.
+
+Proyek dikembangkan dari basis portofolio saya yang sudah tersedia sebelum sesi ini. Pada commit `eaf00d5`, model Experience, serializer, permission, endpoint DRF, integrasi AJAX, dan tes awal sudah ada. Bantuan AI pada sesi ini melanjutkan basis tersebut melalui pemeriksaan kesesuaian panduan, penguatan pengujian, dan penyusunan dokumentasi. Pembedaan ini menunjukkan kontribusi proyek yang sudah tersedia tanpa mengklaim bahwa bantuan AI terbatas pada fitur di luar panduan: review persyaratan, tes wajib, dan refleksi juga dibantu AI.
+
+| Anggota | Alat AI | Dipakai untuk | Basis dan keputusan pemilik proyek |
+| --- | --- | --- | --- |
+| Jeudi Augusto Asadullah | Codex (OpenAI) | Memeriksa panduan resmi dan kode lokal, melengkapi tes regresi permission/CSRF/star, menjalankan pemeriksaan otomatis, dan menyusun bagian Tugas 6 README | Melanjutkan portofolio dan bagian Experience yang telah tersedia; meminta penyelesaian sesuai panduan dan format dokumentasi kelompok. Review pribadi serta submisi akhir tetap menjadi tanggung jawab pemilik proyek. |
+
+##### Ringkasan prompt dan respons
+
+**1. Review dan penyelesaian tugas**
+
+**Prompt (ringkasan):** Selesaikan Tugas Individu 6 sesuai situs PBP pada proyek yang ada, termasuk tambahan yang relevan dan README.
+
+**Jawaban/tindakan:** AI membaca panduan dan menemukan implementasi utama telah tersedia. Perubahan difokuskan pada pengujian isi database setelah penolakan, PUT untuk guest/pengguna biasa, login sesi nyata untuk CSRF, PATCH Editor dengan/tanpa token, serta payload star yang mencoba memakai identitas akun lain. AI juga menambahkan jawaban reflektif dan pemetaan persyaratan ke berkas implementasi.
+
+**2. Format deklarasi**
+
+**Prompt (ringkasan):** Ikuti format deklarasi AI repo ValuWaste dan jelaskan kontribusi dasar pemilik proyek.
+
+**Jawaban/tindakan:** AI membaca README ValuWaste dan memakai struktur tabel, prompt/respons, serta keterbatasan. Basis kode sebelum sesi dibedakan dari perubahan dalam sesi ini. Tidak dibuat klaim bahwa pemilik telah melakukan review manual atau pengujian browser yang belum dikonfirmasi.
+
+##### Keterbatasan yang ditemukan
+
+1. Pembaca web AI sempat menerima 403 dari situs PBP; panduan kemudian diperoleh melalui request HTTP dari terminal. Requirement diperiksa dari halaman tugas, bukan ditebak dari nomor tutorial.
+2. Keberadaan kode sebelum sesi tidak membuktikan seluruh riwayat penulisannya. Deklarasi ini membatasi klaim pada kondisi repository dan pekerjaan sesi yang dapat diperiksa.
+3. Status HTTP saja belum membuktikan database aman. Tes diperkuat dengan pembacaan ulang objek dan jumlah record setelah request ditolak.
+4. Tes API tidak membuktikan seluruh interaksi visual berjalan di semua browser. Pemeriksaan antarmuka dan hasil deployment perlu dibedakan dari hasil tes otomatis; tidak ada klaim deployment atau pengumpulan SCELE dalam sesi ini.
