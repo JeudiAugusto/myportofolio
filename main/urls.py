@@ -1,8 +1,9 @@
-from django.urls import path
+﻿from django.urls import path
 
-from main.views import (
+from main.views import (experience_json, create_experience_ajax, 
     create_experience,
     create_project,
+    create_project_ajax,
     delete_experience,
     delete_project,
     get_experiences_json,
@@ -23,6 +24,8 @@ app_name = "main"
 
 
 urlpatterns = [
+    path('experiences/json/', experience_json, name='experience_json'),
+    path('experiences/create-ajax/', create_experience_ajax, name='create_experience_ajax'),
     path(
         "",
         show_main,
@@ -78,6 +81,12 @@ urlpatterns = [
         create_project,
         name="create_project",
     ),
+    path(
+        "projects/add-ajax/",
+        create_project_ajax,
+        name="create_project_ajax",
+    ),
+
     path(
         "api/projects/",
         get_projects_json,

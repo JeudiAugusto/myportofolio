@@ -982,7 +982,28 @@
                 </div>
 
 
-                <div class="exp-list">
+{% if user.is_superuser %}
+    <button type="button" class="button" popovertarget="add-project-modal">Add Experience (AJAX)</button>
+    <div id="add-project-modal" class="project-form-modal" popover="auto" role="dialog" aria-labelledby="experience-modal-title">
+        <div class="project-form-modal__content">
+            <h2 id="experience-modal-title">Tambah Experience</h2>
+            <form id="project-form" class="project-form">
+                {% csrf_token %}
+                {{ experience_form.as_p }}
+                <button type="button" class="button button-secondary" popovertarget="add-project-modal" popovertargetaction="hide">Batal</button>
+                <button type="submit" class="button">Simpan</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+                <form id="project-search-form" class="project-search">
+                    <input id="search-input" type="search" name="title" placeholder="Search experience by title..." aria-label="Search experience by title">
+                    <button type="submit" class="button">Search</button>
+                </form>
+                <div id="loading" hidden>Memuat experience...</div>
+                <div id="error" hidden role="alert">Gagal memuat experience. Silakan coba lagi.</div>
+                <div id="empty" hidden>Belum ada experience yang ditemukan.</div>
+                <div id="grid" class="exp-list">
 
 
                     {% for experience in experience_list %}
@@ -1234,4 +1255,184 @@
         </section>
 
     </main>
+{% csrf_token %}
+<script>
+const CAN_EDIT = {{ is_editor|yesno:'true,false' }} || {{ user.is_superuser|yesno:'true,false' }};
+const UPDATE_ENDPOINT = "{% url 'main:update_experience' '00000000-0000-0000-0000-000000000000' %}";
+const STATIC_URL = "{% get_static_prefix %}";
+const BASE_PROJECTS_ENDPOINT = "{% url 'api:experience-list' %}";
+const DETAIL_PROJECT_ENDPOINT = "{% url 'api:experience-detail' '00000000-0000-0000-0000-000000000000' %}";
+const STAR_PROJECT_ENDPOINT = "{% url 'api:experience-star' '00000000-0000-0000-0000-000000000000' %}";
+const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+const IS_AUTHENTICATED = "{{ user.is_authenticated|yesno:'true,false' }}" === "true";
+
+const loadingState = document.getElementById('loading');
+const errorState = document.getElementById('error');
+const emptyState = document.getElementById('empty');
+const gridContainer = document.getElementById('grid');
+const searchForm = document.getElementById('project-search-form');
+const searchInput = document.getElementById('search-input');
+const projectForm = document.getElementById('project-form');
+let projectsAbortController;
+let searchDebounceTimer;
+
+function getCookie(name) {
+    const prefix = `${name}=`;
+    const cookie = document.cookie.split(';').map(value => value.trim())
+        .find(value => value.startsWith(prefix));
+    return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : null;
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+}
+
+function projectEndpoint(pattern, id) {
+    return pattern.replace('00000000-0000-0000-0000-000000000000', id);
+}
+
+function displayPageSection({ showLoading = false, showError = false,
+    showEmpty = false, showGrid = false }) {
+    loadingState.hidden = !showLoading;
+    errorState.hidden = !showError;
+    emptyState.hidden = !showEmpty;
+    gridContainer.hidden = !showGrid;
+}
+
+function safeHttpUrl(value) {
+    try {
+        const url = new URL(value);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch { return ''; }
+}
+
+function buildProjectCardElement(experience) {
+    const article = document.createElement('article');
+    article.className = 'exp-card';
+    const id = escapeHtml(experience.id);
+    const star = IS_AUTHENTICATED
+        ? `<button type="button" class="button button-star${experience.is_starred ? ' is-starred' : ''}"
+            data-action="star" data-id="${id}" title="${escapeHtml(experience.starred_by_names)}">
+            ${experience.is_starred ? 'Unstar' : 'Star'} (${escapeHtml(experience.star_count)})</button>`
+        : `<a href="{% url 'main:login' %}" class="button button-star">Login to star (${escapeHtml(experience.star_count)})</a>`;
+    const update = CAN_EDIT
+        ? `<a class="exp-update-button" href="${projectEndpoint(UPDATE_ENDPOINT, experience.id)}">Update Experience</a>` : '';
+    const remove = IS_SUPERUSER
+        ? `<button type="button" class="exp-delete-button" data-action="delete" data-id="${id}">Delete Experience</button>` : '';
+    const thumbnail = experience.thumbnail
+        ? `<figure class="exp-media"><img class="exp-image" src="${escapeHtml(STATIC_URL + experience.thumbnail.replace(/^\/+/, ''))}" alt="${escapeHtml(experience.title)}" loading="lazy"></figure>` : '';
+    const dateLabel = value => new Date(value).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
+    article.innerHTML = `<div class="exp-card-side">
+        <span class="exp-category">${escapeHtml(experience.category_display)}</span>
+        <span class="exp-status ${experience.is_ongoing ? 'exp-status-active' : 'exp-status-finished'}">
+            ${experience.is_ongoing ? 'Sedang berlangsung' : 'Selesai'}</span></div>
+        <div class="exp-card-main"><h3>${escapeHtml(experience.title)}</h3>
+        ${experience.category === 'organization' ? '<p class="exp-organization">BEM Fasilkom UI 2026</p>' : ''}
+        ${thumbnail}<p class="exp-description">${escapeHtml(experience.description)}</p>
+        <div class="exp-meta"><div><span>STARTED</span><strong>${escapeHtml(dateLabel(experience.started_at))}</strong></div>
+        <div><span>ENDED</span><strong>${experience.is_ongoing ? 'Present' : escapeHtml(dateLabel(experience.ended_at))}</strong></div>
+        <div><span>TYPE</span><strong>${escapeHtml(experience.category_display)}</strong></div></div>
+        <div class="exp-card-actions">${star}${update}${remove}</div></div>`;
+    return article;
+}
+
+async function fetchProjects(searchQuery = '') {
+    if (projectsAbortController) projectsAbortController.abort();
+    projectsAbortController = new AbortController();
+    try {
+        displayPageSection({ showLoading: true });
+        const url = new URL(BASE_PROJECTS_ENDPOINT, window.location.origin);
+        if (searchQuery) url.searchParams.set('title', searchQuery);
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json' },
+            signal: projectsAbortController.signal,
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const projects = await response.json();
+        gridContainer.replaceChildren(...projects.map(buildProjectCardElement));
+        displayPageSection({ showGrid: projects.length > 0, showEmpty: projects.length === 0 });
+    } catch (error) {
+        if (error.name === 'AbortError') return;
+        console.error(error);
+        displayPageSection({ showError: true });
+    }
+}
+
+function apiErrorMessage(data, status) {
+    const messages = Object.values(data).flat().filter(value => typeof value === 'string');
+    return messages.join(' ') || `Request failed (HTTP ${status}).`;
+}
+
+async function writeProject(url, method, payload) {
+    const response = await fetch(url, {
+        method,
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: payload === undefined ? undefined : JSON.stringify(payload),
+    });
+    if (response.status === 204) return null;
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(apiErrorMessage(data, response.status));
+    return data;
+}
+
+async function addProject(event) {
+    event.preventDefault();
+    const button = projectForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+        const fields = new FormData(projectForm);
+        const payload = Object.fromEntries([
+            'title', 'description', 'category', 'thumbnail',
+        ].map(name => [name, fields.get(name)]));
+        await writeProject(BASE_PROJECTS_ENDPOINT, 'POST', payload);
+        projectForm.reset();
+        document.getElementById('add-project-modal').hidePopover();
+        showToast('Success', 'Experience created.', 'success');
+        await fetchProjects(searchInput.value.trim());
+    } catch (error) {
+        showToast('Could not create experience', error.message, 'error');
+    } finally {
+        button.disabled = false;
+    }
+}
+
+if (projectForm) projectForm.addEventListener('submit', addProject);
+
+gridContainer.addEventListener('click', async function(event) {
+    const button = event.target.closest('button[data-action]');
+    if (!button || button.disabled) return;
+    const action = button.dataset.action;
+    if (action === 'delete' && !window.confirm('Delete this experience?')) return;
+    button.disabled = true;
+    try {
+        const pattern = action === 'star' ? STAR_PROJECT_ENDPOINT : DETAIL_PROJECT_ENDPOINT;
+        await writeProject(projectEndpoint(pattern, button.dataset.id),
+            action === 'star' ? 'POST' : 'DELETE');
+        showToast('Success', action === 'star' ? 'Star updated.' : 'Experience deleted.', 'success');
+        await fetchProjects(searchInput.value.trim());
+    } catch (error) {
+        showToast('Request failed', error.message, 'error');
+    } finally {
+        button.disabled = false;
+    }
+});
+
+searchInput.addEventListener('input', function() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => fetchProjects(searchInput.value.trim()), 300);
+});
+searchForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    clearTimeout(searchDebounceTimer);
+    fetchProjects(searchInput.value.trim());
+});
+fetchProjects(searchInput.value.trim());
+
+</script>
 {% endblock content %}

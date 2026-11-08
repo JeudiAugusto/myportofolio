@@ -1118,30 +1118,28 @@
 
                             <div class="projects-controls">
 
-                                <a
-                                    href="{% url 'main:create_project' %}"
-                                    class="project-add-button"
+                                <button
+                                    type="button"
+                                    class="button project-add-button"
+                                    popovertarget="add-project-modal"
                                 >
                                     <span aria-hidden="true">
                                         +
                                     </span>
 
                                     Add Project
-                                </a>
+                                </button>
 
                             </div>
 
                         {% endif %}
 
 
-                        <form
-                            method="GET"
-                            action="{% url 'main:show_projects' %}"
-                            class="project-search"
-                        >
+                        <form id="project-search-form" class="project-search">
 
                             <input
                                 type="search"
+                                id="search-input"
                                 name="title"
                                 value="{{ title_query }}"
                                 placeholder="Search project by title..."
@@ -1171,137 +1169,23 @@
                     </div>
 
                 </div>
-
-
                 <!-- ================= DYNAMIC PROJECT LIST ================= -->
 
-                <div class="projects-list">
-
-
-                    {% for project in project_list %}
-
-                        <article class="work-card">
-
-
-                            <div class="work-card-top">
-
-                                <span class="work-number">
-                                    PROJECT {{ forloop.counter|stringformat:"02d" }}
-                                </span>
-
-                                <span>
-                                    {{ project.year }}
-                                </span>
-
-                            </div>
-
-
-                            <h3>
-                                {{ project.title }}
-                            </h3>
-
-
-                            <p class="work-description">
-                                {{ project.description }}
-                            </p>
-
-
-                            <div class="work-tech">
-
-                                {% for technology in project.technology_list %}
-
-                                    <span>
-                                        {{ technology }}
-                                    </span>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <div class="work-meta">
-
-
-                                <div>
-
-                                    <span>
-                                        ROLE
-                                    </span>
-
-                                    <strong>
-                                        {{ project.role }}
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                    <span>
-                                        FOCUS
-                                    </span>
-
-                                    <strong>
-                                        {{ project.focus }}
-                                    </strong>
-
-                                </div>
-
-
-                            </div>
-
-
-                            {% if project.repository_url %}
-
-                                <a
-                                    href="{{ project.repository_url }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="work-link"
-                                >
-                                    View Repository
-
-                                    <span>
-                                        ↗
-                                    </span>
-                                </a>
-
-                            {% endif %}
-
-                            {% include 'components/project_star.html' with project=project %}
-
-                            {% if user.is_superuser %}
-
-                                {% include 'components/project_delete_modal.html' %}
-
-                            {% endif %}
-
-
-                        </article>
-
-
-                    {% empty %}
-
-                        <div class="projects-empty">
-
-                            <p class="projects-eyebrow">
-                                PROJECTS
-                            </p>
-
-                            <h3>
-                                Nothing here yet.
-                            </h3>
-
-                            <p>
-                                Belum ada project yang ditambahkan.
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
-
-
+                <div id="loading" class="projects-empty hide">
+                    <p>Memuat projects...</p>
                 </div>
+
+                <div id="error" class="projects-empty hide">
+                    <p>Gagal memuat data projects. Silakan coba lagi.</p>
+                </div>
+
+                <div id="empty" class="projects-empty hide">
+                    <p>Belum ada project yang ditambahkan atau ditemukan.</p>
+                </div>
+
+                <div id="grid" class="projects-list hide"></div>
+
+
 
 
                 <!-- ================= BOTTOM CTA ================= -->
@@ -1336,4 +1220,257 @@
         </section>
 
     </main>
+{% if user.is_superuser %}
+    {% include "components/project_form_modal.html" %}
+{% endif %}
+
+    {% csrf_token %}
+    <script>
+const BASE_PROJECTS_ENDPOINT = "{% url 'api:project-list' %}";
+const DETAIL_PROJECT_ENDPOINT = "{% url 'api:project-detail' '00000000-0000-0000-0000-000000000000' %}";
+const STAR_PROJECT_ENDPOINT = "{% url 'api:project-star' '00000000-0000-0000-0000-000000000000' %}";
+const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+const IS_AUTHENTICATED = "{{ user.is_authenticated|yesno:'true,false' }}" === "true";
+
+const loadingState = document.getElementById('loading');
+const errorState = document.getElementById('error');
+const emptyState = document.getElementById('empty');
+const gridContainer = document.getElementById('grid');
+const searchForm = document.getElementById('project-search-form');
+const searchInput = document.getElementById('search-input');
+const projectForm = document.getElementById('project-form');
+let projectsAbortController;
+let searchDebounceTimer;
+
+function getCookie(name) {
+    const prefix = `${name}=`;
+    const cookie = document.cookie.split(';').map(value => value.trim())
+        .find(value => value.startsWith(prefix));
+    return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : null;
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+}
+
+function projectEndpoint(pattern, id) {
+    return pattern.replace('00000000-0000-0000-0000-000000000000', id);
+}
+
+function displayPageSection({ showLoading = false, showError = false,
+    showEmpty = false, showGrid = false }) {
+    loadingState.classList.toggle('hide', !showLoading);
+    errorState.classList.toggle('hide', !showError);
+    emptyState.classList.toggle('hide', !showEmpty);
+    gridContainer.classList.toggle('hide', !showGrid);
+}
+
+function safeHttpUrl(value) {
+    try {
+        const url = new URL(value);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch { return ''; }
+}
+
+        function buildProjectCardElement(project, index) {
+            const projectId = project.id;
+
+            const articleElement = document.createElement('article');
+            articleElement.className = 'work-card';
+
+            const technologiesHtml = project.technologies
+                .split(',')
+                .map(technology => technology.trim())
+                .filter(Boolean)
+                .map(
+                    technology =>
+                        `<span>${escapeHtml(technology)}</span>`
+                )
+                .join('');
+
+            const repositoryUrl = safeHttpUrl(project.repository_url);
+            const repositoryHtml = repositoryUrl
+                ? `
+                    <a
+                        href="${escapeHtml(repositoryUrl)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="work-link"
+                    >
+                        View Repository
+                        <span>↗</span>
+                    </a>
+                `
+                : '';
+
+            const isStarredClass = project.is_starred
+                ? ' is-starred'
+                : '';
+
+            const starText = project.is_starred
+                ? 'Unstar'
+                : 'Star';
+
+            const starTitle = project.star_count > 0
+                ? `Dibintangi oleh ${escapeHtml(project.starred_by_names)}`
+                : 'Jadilah yang pertama memberi star';
+
+            const starHtml = IS_AUTHENTICATED
+                ? `<button type="button" class="button button-star${isStarredClass}"
+                    data-action="star" data-id="${escapeHtml(projectId)}" title="${starTitle}">
+                    ${starText} <span class="star-count">${escapeHtml(project.star_count)}</span></button>`
+                : `<a href="{% url 'main:login' %}" class="button button-star">Login to star (${escapeHtml(project.star_count)})</a>`;
+            const deleteHtml = IS_SUPERUSER
+                ? `<button type="button" class="project-delete-button" data-action="delete"
+                    data-id="${escapeHtml(projectId)}">Delete Project</button>` : '';
+
+            const projectNumber =
+                String(index + 1).padStart(2, '0');
+
+            articleElement.innerHTML = `
+                <div class="work-card-top">
+                    <span class="work-number">
+                        PROJECT ${projectNumber}
+                    </span>
+
+                    <span>
+                        ${escapeHtml(project.year)}
+                    </span>
+                </div>
+
+                <h3>
+                    ${escapeHtml(project.title)}
+                </h3>
+
+                <p class="work-description">
+                    ${escapeHtml(project.description)}
+                </p>
+
+                <div class="work-tech">
+                    ${technologiesHtml}
+                </div>
+
+                <div class="work-meta">
+                    <div>
+                        <span>ROLE</span>
+                        <strong>
+                            ${escapeHtml(project.role)}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>FOCUS</span>
+                        <strong>
+                            ${escapeHtml(project.focus)}
+                        </strong>
+                    </div>
+                </div>
+
+                ${repositoryHtml}
+                ${starHtml}
+                ${deleteHtml}
+            `;
+
+            return articleElement;
+        }
+
+
+async function fetchProjects(searchQuery = '') {
+    if (projectsAbortController) projectsAbortController.abort();
+    projectsAbortController = new AbortController();
+    try {
+        displayPageSection({ showLoading: true });
+        const url = new URL(BASE_PROJECTS_ENDPOINT, window.location.origin);
+        if (searchQuery) url.searchParams.set('title', searchQuery);
+        const response = await fetch(url, {
+            headers: { Accept: 'application/json' },
+            signal: projectsAbortController.signal,
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const projects = await response.json();
+        gridContainer.replaceChildren(...projects.map(buildProjectCardElement));
+        displayPageSection({ showGrid: projects.length > 0, showEmpty: projects.length === 0 });
+    } catch (error) {
+        if (error.name === 'AbortError') return;
+        console.error(error);
+        displayPageSection({ showError: true });
+    }
+}
+
+function apiErrorMessage(data, status) {
+    const messages = Object.values(data).flat().filter(value => typeof value === 'string');
+    return messages.join(' ') || `Request failed (HTTP ${status}).`;
+}
+
+async function writeProject(url, method, payload) {
+    const response = await fetch(url, {
+        method,
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: payload === undefined ? undefined : JSON.stringify(payload),
+    });
+    if (response.status === 204) return null;
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(apiErrorMessage(data, response.status));
+    return data;
+}
+
+async function addProject(event) {
+    event.preventDefault();
+    const button = projectForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+        const fields = new FormData(projectForm);
+        const payload = Object.fromEntries([
+            'title', 'description', 'year', 'role', 'focus', 'technologies', 'repository_url',
+        ].map(name => [name, fields.get(name)]));
+        await writeProject(BASE_PROJECTS_ENDPOINT, 'POST', payload);
+        projectForm.reset();
+        document.getElementById('add-project-modal').hidePopover();
+        showToast('Success', 'Project created.', 'success');
+        await fetchProjects(searchInput.value.trim());
+    } catch (error) {
+        showToast('Could not create project', error.message, 'error');
+    } finally {
+        button.disabled = false;
+    }
+}
+
+if (projectForm) projectForm.addEventListener('submit', addProject);
+
+gridContainer.addEventListener('click', async function(event) {
+    const button = event.target.closest('button[data-action]');
+    if (!button || button.disabled) return;
+    const action = button.dataset.action;
+    if (action === 'delete' && !window.confirm('Delete this project?')) return;
+    button.disabled = true;
+    try {
+        const pattern = action === 'star' ? STAR_PROJECT_ENDPOINT : DETAIL_PROJECT_ENDPOINT;
+        await writeProject(projectEndpoint(pattern, button.dataset.id),
+            action === 'star' ? 'POST' : 'DELETE');
+        showToast('Success', action === 'star' ? 'Star updated.' : 'Project deleted.', 'success');
+        await fetchProjects(searchInput.value.trim());
+    } catch (error) {
+        showToast('Request failed', error.message, 'error');
+    } finally {
+        button.disabled = false;
+    }
+});
+
+searchInput.addEventListener('input', function() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => fetchProjects(searchInput.value.trim()), 300);
+});
+searchForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    clearTimeout(searchDebounceTimer);
+    fetchProjects(searchInput.value.trim());
+});
+fetchProjects(searchInput.value.trim());
+    </script>
 {% endblock content %}

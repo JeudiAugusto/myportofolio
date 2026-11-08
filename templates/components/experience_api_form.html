@@ -1,0 +1,27 @@
+<script>
+(() => {
+    const form = document.querySelector('.experience-form');
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        try {
+            const fields = new FormData(form);
+            const payload = Object.fromEntries(['title', 'description', 'category', 'thumbnail'].map(name => [name, fields.get(name)]));
+            const response = await fetch('{% if experience %}{% url "api:experience-detail" experience.id %}{% else %}{% url "api:experience-list" %}{% endif %}', {
+                method: '{% if experience %}PATCH{% else %}POST{% endif %}',
+                headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRFToken': fields.get('csrfmiddlewaretoken')},
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(Object.values(data).flat().join(' ') || `HTTP ${response.status}`);
+            {% if not experience %}form.reset();{% endif %}
+            showToast('Berhasil', 'Experience tersimpan. Gunakan tautan kembali untuk melihat daftar.', 'success');
+        } catch (error) {
+            showToast('Gagal menyimpan', error.message, 'error');
+        } finally {
+            button.disabled = false;
+        }
+    });
+})();
+</script>
