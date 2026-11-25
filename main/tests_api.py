@@ -48,13 +48,22 @@ class ProjectAPITest(APITestCase):
 
     def test_guest_and_visitor_cannot_write(self):
         for user in (None, self.visitor):
+            expected = 403 if user else 401
             self.client.force_authenticate(user=user)
-            self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, 403)
-            self.assertEqual(self.client.patch(self.detail_url, {"title": "Changed"}, format="json").status_code, 403)
-            self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
+            self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, expected)
+            self.assertEqual(self.client.patch(self.detail_url, {"title": "Changed"}, format="json").status_code, expected)
+            self.assertEqual(self.client.delete(self.detail_url).status_code, expected)
         self.assertEqual(Project.objects.count(), 1)
         self.project.refresh_from_db()
         self.assertEqual(self.project.title, "Portfolio")
+
+    def test_mobile_token_lifecycle(self):
+        login = self.client.post(reverse("api:token"), {"username": "owner", "password": "test-password"})
+        self.assertEqual(login.status_code, 200)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + login.data["token"])
+        self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, 201)
+        self.assertEqual(self.client.post(reverse("api:logout")).status_code, 204)
+        self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, 401)
 
     def test_owner_can_create(self):
         self.client.force_authenticate(user=self.owner)

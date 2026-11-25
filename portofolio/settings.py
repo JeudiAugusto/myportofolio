@@ -73,6 +73,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main",
     "rest_framework",
+    "corsheaders",
+    "rest_framework.authtoken",
 ]
 
 
@@ -81,6 +83,7 @@ INSTALLED_APPS = [
 # =========================================================
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -220,3 +223,13 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+if not PRODUCTION:
+    ALLOWED_HOSTS.append("10.0.2.2")
+
+CORS_ALLOW_ALL_ORIGINS = not PRODUCTION
+CORS_ALLOWED_ORIGINS = [v.strip() for v in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if v.strip()]
+REST_FRAMEWORK = {"DEFAULT_AUTHENTICATION_CLASSES": [
+    "rest_framework.authentication.TokenAuthentication",
+    "rest_framework.authentication.SessionAuthentication",
+]}
